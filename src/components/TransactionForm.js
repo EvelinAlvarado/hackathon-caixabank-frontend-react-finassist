@@ -28,7 +28,7 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
   const [description, setDescription] = useState("");
   const [amount, setAmount] = useState("");
   const [type, setType] = useState("expense");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState("Other Expenses");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 
   // Implement the function to assign a category based on description keywords
@@ -119,7 +119,6 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
                   onChange={(e) => setCategory(e.target.value)}
                   label="Category"
                   name="category"
-                  /* defaultValue="Other Expenses" */
                   inputProps={{ name: "filterCategoryForm" }}
                 >
                   {/* Instructions: Use the `allCategories` imported file to render the categories as menu items */}

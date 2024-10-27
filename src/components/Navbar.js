@@ -35,7 +35,12 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
   };
 
   const DrawerList = (
-    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
+    <Box
+      /* className="App-header" */
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(false)}
+    >
       <List>
         {MENU_ITEMS.map((item) => (
           <ListItem key={item.label} disablePadding>
@@ -73,9 +78,10 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             </Drawer>
           </Box>
           <Avatar
+            className="App-logo"
             alt="CaixaBank icon"
             src={CaixaBankIcon}
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1, height: "40px" }}
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
           />
 
           {/* Navigation links */}
