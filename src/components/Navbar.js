@@ -13,6 +13,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  Divider,
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -49,9 +50,16 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ bgcolor: "background.default" }}>
         <Toolbar>
-          <Box sx={{ display: { xs: "flex", md: "none" } }}>
+          <Box
+            sx={{
+              display: {
+                xs: "flex",
+                md: "none",
+              },
+            }}
+          >
             <IconButton
               edge="start"
               aria-label="menu"
@@ -67,7 +75,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           <Avatar
             alt="CaixaBank icon"
             src={CaixaBankIcon}
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1, height: "40px" }}
           />
 
           {/* Navigation links */}
@@ -79,22 +87,62 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           <Typography
             variant="h6"
             component="div"
-            sx={{ flexGrow: 1, fontStyle: "italic", ml: 2 }}
+            sx={{
+              flexGrow: 1,
+              fontStyle: "italic",
+              ml: 2,
+              color: "text.primary",
+            }}
           >
             CaixaBankNow
           </Typography>
-          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
+          {/* <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}> */}
+          {/* implement logic for users no register */}
+          <Box sx={{ display: { xs: "none" }, mr: 2 }}>
             {AUTH_LINKS.map((link) => (
               <Button
                 key={link.label}
                 /* onClick={handleCloseNavMenu} */
                 component={Link}
                 to={link.url}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  display: "block",
+                  color: "text.primary",
+                }}
               >
                 {link.label}
               </Button>
             ))}
+          </Box>
+          {/* Menu links for desktop screen */}
+          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
+            {MENU_ITEMS.map((link) => (
+              <Button
+                key={link.label}
+                /* onClick={handleCloseNavMenu} */
+                component={Link}
+                to={link.url}
+                sx={{
+                  my: 2,
+                  display: "block",
+                  color: "text.primary",
+                }}
+              >
+                {link.label}
+              </Button>
+            ))}
+            <Divider orientation="vertical" variant="middle" flexItem />
+            <Button
+              component={Link}
+              to={"/login"} //verified!
+              sx={{
+                my: 2,
+                display: "block",
+                color: "text.primary",
+              }}
+            >
+              Logout
+            </Button>
           </Box>
           <Box>
             <IconButton>
