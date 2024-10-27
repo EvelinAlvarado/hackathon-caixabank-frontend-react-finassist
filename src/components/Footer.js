@@ -33,7 +33,7 @@ const Footer = () => {
       }}
     >
       {/* Search bar */}
-      <Box sx={{ width: { xs: "300px", md: "500px" } }}>
+      <Box sx={{ width: { xs: "300px", sm: "500px" } }}>
         <Paper component="form" sx={{ width: "100%", display: "flex" }}>
           <IconButton aria-label="search">
             {/* Add the search icon here */}
