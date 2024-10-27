@@ -28,7 +28,6 @@ const Footer = () => {
         justifyContent: "center",
         alignItems: "center",
         padding: "32px",
-
         gap: "24px",
       }}
     >
@@ -46,7 +45,7 @@ const Footer = () => {
         </Paper>
       </Box>
 
-      <Typography>
+      <Typography sx={{ color: "#777777" }}>
         © {new Date().getFullYear()} Personal Finance Assistant
       </Typography>
 
@@ -55,7 +54,7 @@ const Footer = () => {
                 - Add IconButtons for Facebook, Twitter, and Instagram.
                 - Ensure each icon button links to the appropriate social media page.
                 - Use the respective Material UI icons for Facebook, Twitter, and Instagram. */}
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", color: "#777777" }}>
         {/* IconButton for Facebook */}
         <IconButton
           component="a"
@@ -84,20 +83,20 @@ const Footer = () => {
           <InstagramIcon />
         </IconButton>
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "center" }}>
+      <Box sx={{ display: "flex", justifyContent: "center", color: "#777777" }}>
         <Typography
           variant="body2"
           component="div"
-          sx={{ display: "flex", alignItems: "center" }}
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "underline",
+            color: "#777777",
+          }}
         >
           {POLICIES.map((policy, index) => (
             <span key={index} style={{ display: "flex", alignItems: "center" }}>
-              <Link
-                href={policy.url}
-                sx={{ color: "inherit", textDecoration: "none" }}
-              >
-                {policy.label}
-              </Link>
+              <Link href={policy.url}>{policy.label}</Link>
               {/* Add "|" if not the last one */}
               {index < POLICIES.length - 1 && (
                 <Typography sx={{ mx: 1 }}>|</Typography>
