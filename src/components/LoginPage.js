@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../stores/authStore";
+import { login, registerUser } from "../stores/authStore";
 import { Box, Button, TextField, Typography, Alert, Grid } from "@mui/material";
 
 function LoginPage() {
@@ -8,16 +8,29 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [showCredentials, setShowCredentials] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   const defaultCredentials = {
     email: "default@example.com",
     password: "password123",
   };
+
+  //register once
+  useEffect(() => {
+    registerUser({
+      email: defaultCredentials.email,
+      password: defaultCredentials.password,
+    });
+  }, []);
+
   console.log(email, password);
 
   const handleLogin = (e) => {
     e.preventDefault();
+
+    setError("");
+    setLoading(true);
 
     // Validate that fields are not empty
     // Instructions:
@@ -25,37 +38,40 @@ function LoginPage() {
     if (!email || !password) {
       // - If either is empty, set an appropriate error message.
       setError("Please complete all fields.");
+      setLoading(false);
       return;
     }
 
     // Validate credentials
     // Instructions:
     // - Check if the entered credentials match the default credentials or the stored user credentials.
-    const storedUser = JSON.parse(localStorage.getItem("user"));
 
     // Check for default credentials
-    if (
-      email === defaultCredentials.email &&
-      password === defaultCredentials.password
-    ) {
-      const userData = { email, password };
-      login(userData);
+    // if (
+    //   email === defaultCredentials.email &&
+    //   password === defaultCredentials.password
+    // ) {
+    //   const userData = {
+    //     email: defaultCredentials.email,
+    //     password: defaultCredentials.password,
+    //   };
+    //   login(userData); // Call the login function with default credentials
+    //   navigate("/");
+    //   return;
+    // }
+
+    const result = login({ email, password });
+    setLoading(false);
+
+    if (result.success) {
       navigate("/");
-      return;
+    } else {
+      setError(result.error);
     }
 
     // - If valid, call the `login` function and navigate to the homepage.
-    if (
-      storedUser &&
-      email === storedUser.email &&
-      password === storedUser.password
-    ) {
-      login(storedUser);
-      navigate("/");
-      return;
-    }
+
     // - If invalid, set an error message.
-    setError("Invalid credentials.");
   };
 
   const handleShowDefaultCredentials = () => {
@@ -102,8 +118,9 @@ function LoginPage() {
           color="primary"
           fullWidth
           sx={{ mt: 2 }}
+          disabled={loading}
         >
-          Login
+          {loading ? "Loading..." : "Login"}
         </Button>
       </form>
       {error && (

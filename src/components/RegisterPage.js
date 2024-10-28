@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Alert } from "@mui/material";
-import { login } from "../stores/authStore";
+import { login, registerUser } from "../stores/authStore";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -33,18 +33,17 @@ function RegisterPage() {
     }
 
     // Check if the email is already registered in localStorage.
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    const result = registerUser({ email, password });
     // - Retrieve the existing user from localStorage and verify if the entered email already exists.
     // - If the email exists, set an error message.
-    if (storedUser && storedUser.email === email) {
-      setError("Email is already registered. Please Login");
+    if (!result.success) {
+      setError(result.error); // Show the error from registerUser
       return;
     }
 
     // Save the new user's data to localStorage.
     // - If validation passes, store the new user's email and password in localStorage.
     const newUser = { email, password };
-    localStorage.setItem("user", JSON.stringify(newUser));
     console.log("new user: ", newUser);
 
     // Automatically log the user in after successful registration.
