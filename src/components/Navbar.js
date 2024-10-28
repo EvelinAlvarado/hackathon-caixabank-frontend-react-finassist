@@ -20,7 +20,8 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { Link } from "react-router-dom";
-import CaixaBankIcon from "../assets/caixabank-icon-blue.png";
+import CaixaBankIconBlue from "../assets/caixabank-icon-blue.png";
+import CaixaBankIcon from "../assets/caixabank-icon.png";
 import { AUTH_LINKS, MENU_ITEMS } from "../constants/navigation";
 
 const Navbar = ({ toggleTheme, isDarkMode }) => {
@@ -82,7 +83,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           <Avatar
             className="App-logo"
             alt="CaixaBank icon"
-            src={CaixaBankIcon}
+            src={isDarkMode ? CaixaBankIcon : CaixaBankIconBlue}
             sx={{ display: { xs: "none", lg: "flex" }, mr: 1 }}
           />
 
