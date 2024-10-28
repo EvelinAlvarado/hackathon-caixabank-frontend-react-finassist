@@ -17,6 +17,8 @@ import {
 } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import LightModeIcon from "@mui/icons-material/LightMode";
+import DarkModeIcon from "@mui/icons-material/DarkMode";
 import { Link } from "react-router-dom";
 import CaixaBankIcon from "../assets/caixabank-icon-blue.png";
 import { AUTH_LINKS, MENU_ITEMS } from "../constants/navigation";
@@ -61,7 +63,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             sx={{
               display: {
                 xs: "flex",
-                md: "none",
+                lg: "none",
               },
             }}
           >
@@ -81,7 +83,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             className="App-logo"
             alt="CaixaBank icon"
             src={CaixaBankIcon}
-            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
+            sx={{ display: { xs: "none", lg: "flex" }, mr: 1 }}
           />
 
           {/* Navigation links */}
@@ -121,7 +123,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             ))}
           </Box>
           {/* Menu links for desktop screen */}
-          <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
+          <Box sx={{ display: { xs: "none", lg: "flex" }, mr: 2 }}>
             {MENU_ITEMS.map((link) => (
               <Button
                 key={link.label}
@@ -150,11 +152,22 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
               Logout
             </Button>
           </Box>
-          <Box>
-            <IconButton>
+          <Box sx={{ display: "flex" }}>
+            <IconButton sx={{ paddingRight: { md: 2 } }}>
               <Badge color="error" variant="dot">
                 <NotificationsIcon />
               </Badge>
+            </IconButton>
+            {/* Dark/light Mode   */}
+            <IconButton
+              aria-label="Toggle Theme"
+              onClick={toggleTheme}
+              sx={{ paddingRight: { md: 2 } }}
+            >
+              {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
+            </IconButton>
+            <IconButton>
+              <Avatar alt="">l</Avatar>
             </IconButton>
 
             {/* User avatar */}

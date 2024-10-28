@@ -1,6 +1,13 @@
-import React, { Profiler } from "react";
+import React, { Profiler, Suspense } from "react";
 import { useStore } from "@nanostores/react";
-import { Box, Typography, Grid, Paper, Grid2 } from "@mui/material";
+import {
+  Box,
+  Typography,
+  Grid,
+  Paper,
+  Grid2,
+  CircularProgress,
+} from "@mui/material";
 import ExportButton from "./ExportButton";
 import DownloadProfilerData from "./DownloadProfilerData";
 import { onRenderCallback } from "../utils/onRenderCallback";
@@ -119,20 +126,6 @@ function Dashboard() {
           </Grid>
         </Grid>
 
-        {/* Statistics and Recommendations Section */}
-        {/* Instructions:
-                    - Use the `Statistics` component to show key financial metrics.
-                    - Use the `Recommendations` component to display financial advice.
-                */}
-        <Grid container spacing={4} sx={{ mt: 4 }}>
-          <Grid item xs={12} md={6}>
-            {/* <Statistics /> */}
-          </Grid>
-          <Grid item xs={12} md={6}>
-            {/* <Recommendations /> */}
-          </Grid>
-        </Grid>
-
         {/* Charts Section */}
         {/* Instructions:
                     - Use the `AnalysisGraph` component to show a breakdown of income and expenses by category.
@@ -140,10 +133,33 @@ function Dashboard() {
                 */}
         <Grid container spacing={4} sx={{ mt: 4 }}>
           <Grid item xs={12} md={6}>
-            {/* <AnalysisGraph /> */}
+            <Suspense fallback={<CircularProgress />}>
+              <AnalysisGraph />
+            </Suspense>
           </Grid>
           <Grid item xs={12} md={6}>
-            {/* <BalanceOverTime /> */}
+            <Suspense fallback={<CircularProgress />}>
+              <BalanceOverTime />
+            </Suspense>
+          </Grid>
+        </Grid>
+
+        {/* Statistics and Recommendations Section */}
+        {/* Instructions:
+                    - Use the `Statistics` component to show key financial metrics.
+                    - Use the `Recommendations` component to display financial advice.
+                */}
+        <Grid container spacing={4} direction="row" sx={{ mt: 4 }}>
+          <Grid item xs={12} md={6}>
+            {/* Wrap a component that using react.lazy in Suspense with a loading indicator */}
+            <Suspense fallback={<CircularProgress />}>
+              <Statistics />
+            </Suspense>
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Suspense fallback={<CircularProgress />}>
+              <Recommendations />
+            </Suspense>
           </Grid>
         </Grid>
 
@@ -154,12 +170,14 @@ function Dashboard() {
                 */}
         <Box
           sx={{
-            display: "flex",
             width: "100%",
+            mt: 7,
           }}
         >
           <Typography variant="h5">Recent Transactions</Typography>
-          {/* <RecentTransactions /> */}
+          <Suspense fallback={<CircularProgress />}>
+            <RecentTransactions />
+          </Suspense>
         </Box>
       </Box>
     </Profiler>
