@@ -167,6 +167,34 @@ function TransactionList() {
             {/* Map over the transactions and render each transaction as a row.
                             - For each row, add logic for Edit and Delete actions.
                             - Display the transaction data in the respective table cells. */}
+            {transactions.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell>{transaction.description}</TableCell>
+                <TableCell>{transaction.amount.toFixed(2)} €</TableCell>
+                <TableCell>
+                  {transaction.type === "income" ? "Income" : "Expense"}
+                </TableCell>
+                <TableCell>{transaction.category}</TableCell>
+                <TableCell>
+                  {new Date(transaction.date).toLocaleDateString("en-US")}
+                </TableCell>
+                <TableCell>
+                  <Button
+                    variant="outlined"
+                    onClick={() => handleEdit(transaction)} // Open edit dialog
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    variant="outlined"
+                    color="secondary"
+                    onClick={() => deleteTransaction(transaction.id)} // Delete transaction
+                  >
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>

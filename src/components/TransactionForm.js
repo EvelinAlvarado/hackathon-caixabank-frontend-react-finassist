@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
-import { transactionsStore } from "../stores/transactionStore";
+import {
+  addTransaction,
+  setTransactions,
+  transactionsStore,
+} from "../stores/transactionStore";
 import {
   Dialog,
   DialogTitle,
@@ -37,7 +41,18 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
     // - Loop through `categoryKeywords` to find matching keywords
     // - If a keyword is found in the description, return the category
     // - Return 'Other Expenses' if no category is found
+    const lowerDesc = desc.toLowerCase();
 
+    for (let category in categoryKeywords) {
+      const keywords = categoryKeywords[category];
+
+      for (let i = 0; i < keywords.length; i++) {
+        const keyword = keywords[i].toLowerCase();
+        if (lowerDesc.includes(keyword)) {
+          return category;
+        }
+      }
+    }
     return "Other Expenses";
   };
 
@@ -60,6 +75,30 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
     // - If adding a new transaction, create it and save it to the store.
     // - The transaction type should be either "income" or "expense".
     // - Ensure the transaction has the following structure: { id, description, amount, type, category, date }
+    if (!description || !amount || !type || !category || !date) {
+      alert("All fields are required.");
+      return;
+    }
+
+    const transaction = {
+      id: transactionToEdit ? transactionToEdit.id : Date.now(),
+      description,
+      amount: parseFloat(amount),
+      type,
+      category,
+      date,
+    };
+
+    if (transactionToEdit) {
+      const updatedTransactions = transactions.map((t) =>
+        t.id === transactionToEdit.id ? transaction : t
+      );
+      setTransactions(updatedTransactions);
+    } else {
+      addTransaction(transaction);
+    }
+    console.log("transaction:", transaction);
+    handleClose();
   };
 
   return (
