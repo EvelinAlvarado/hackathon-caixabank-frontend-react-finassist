@@ -19,13 +19,15 @@ import MenuIcon from "@mui/icons-material/Menu";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import LightModeIcon from "@mui/icons-material/LightMode";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import CaixaBankIconBlue from "../assets/caixabank-icon-blue.png";
 import CaixaBankIcon from "../assets/caixabank-icon.png";
 import { AUTH_LINKS, MENU_ITEMS } from "../constants/navigation";
+import { logout } from "../stores/authStore";
 
-const Navbar = ({ toggleTheme, isDarkMode }) => {
+const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const navigate = useNavigate();
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -37,6 +39,12 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
     setDrawerOpen(open);
   };
 
+  const storedUser = JSON.parse(localStorage.getItem("user"));
+  const avatarLetter =
+    isAuthenticated && storedUser?.email
+      ? storedUser.email[0].toUpperCase()
+      : "";
+
   const DrawerList = (
     <Box
       /* className="App-header" */
@@ -44,15 +52,37 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
       role="presentation"
       onClick={toggleDrawer(false)}
     >
-      <List>
-        {MENU_ITEMS.map((item) => (
-          <ListItem key={item.label} disablePadding>
-            <ListItemButton component={Link} to={item.url}>
-              <ListItemText primary={item.label} />
+      {isAuthenticated ? (
+        <List>
+          {MENU_ITEMS.map((item) => (
+            <ListItem key={item.label} disablePadding>
+              <ListItemButton component={Link} to={item.url}>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+          <ListItem key="Logout" disablePadding>
+            <ListItemButton
+              onClick={() => {
+                logout(); // Call the logout function
+                navigate("/login"); // Redirect to login
+              }}
+            >
+              <ListItemText primary="Logout" />
             </ListItemButton>
           </ListItem>
-        ))}
-      </List>
+        </List>
+      ) : (
+        <List>
+          {AUTH_LINKS.map((item) => (
+            <ListItem key={item.label} disablePadding>
+              <ListItemButton component={Link} to={item.url}>
+                <ListItemText primary={item.label} />
+              </ListItemButton>
+            </ListItem>
+          ))}
+        </List>
+      )}
     </Box>
   );
 
@@ -64,7 +94,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             sx={{
               display: {
                 xs: "flex",
-                lg: "none",
+                ...(isAuthenticated ? { lg: "none" } : { md: "none" }),
               },
             }}
           >
@@ -105,54 +135,60 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           >
             CaixaBankNow
           </Typography>
-          {/* <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}> */}
-          {/* implement logic for users no register */}
-          <Box sx={{ display: { xs: "none" }, mr: 2 }}>
-            {AUTH_LINKS.map((link) => (
+
+          {isAuthenticated ? (
+            /* Menu links for desktop screen */
+            <Box sx={{ display: { xs: "none", lg: "flex" }, mr: 2 }}>
+              {MENU_ITEMS.map((link) => (
+                <Button
+                  key={link.label}
+                  /* onClick={handleCloseNavMenu} */
+                  component={Link}
+                  to={link.url}
+                  sx={{
+                    my: 2,
+                    display: "block",
+                    color: "text.primary",
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+              <Divider orientation="vertical" variant="middle" flexItem />
               <Button
-                key={link.label}
-                /* onClick={handleCloseNavMenu} */
-                component={Link}
-                to={link.url}
-                sx={{
-                  display: "block",
-                  color: "text.primary",
+                onClick={() => {
+                  logout(); // Call the logout function
+                  navigate("/login"); // Redirect to login
                 }}
-              >
-                {link.label}
-              </Button>
-            ))}
-          </Box>
-          {/* Menu links for desktop screen */}
-          <Box sx={{ display: { xs: "none", lg: "flex" }, mr: 2 }}>
-            {MENU_ITEMS.map((link) => (
-              <Button
-                key={link.label}
-                /* onClick={handleCloseNavMenu} */
-                component={Link}
-                to={link.url}
                 sx={{
                   my: 2,
                   display: "block",
                   color: "text.primary",
                 }}
               >
-                {link.label}
+                Logout
               </Button>
-            ))}
-            <Divider orientation="vertical" variant="middle" flexItem />
-            <Button
-              component={Link}
-              to={"/login"} //verified!
-              sx={{
-                my: 2,
-                display: "block",
-                color: "text.primary",
-              }}
-            >
-              Logout
-            </Button>
-          </Box>
+            </Box>
+          ) : (
+            /* implement logic for users no register */
+            <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
+              {AUTH_LINKS.map((link) => (
+                <Button
+                  key={link.label}
+                  /* onClick={handleCloseNavMenu} */
+                  component={Link}
+                  to={link.url}
+                  sx={{
+                    display: "block",
+                    color: "text.primary",
+                  }}
+                >
+                  {link.label}
+                </Button>
+              ))}
+            </Box>
+          )}
+
           <Box sx={{ display: "flex" }}>
             <IconButton sx={{ paddingRight: { md: 2 } }}>
               <Badge color="error" variant="dot">
@@ -167,14 +203,15 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             >
               {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
-            <IconButton>
-              <Avatar alt="">l</Avatar>
-            </IconButton>
-
             {/* User avatar */}
             {/* Instructions:
                             - Display the user's avatar if they are logged in.
                             - Use an Avatar component and display the user's email as a tooltip or alt text. */}
+            {isAuthenticated && (
+              <IconButton>
+                <Avatar alt={storedUser.email}>{avatarLetter}</Avatar>
+              </IconButton>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
