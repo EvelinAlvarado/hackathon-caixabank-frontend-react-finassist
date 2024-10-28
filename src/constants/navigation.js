@@ -5,7 +5,7 @@ export const AUTH_LINKS = [
 
 export const MENU_ITEMS = [
   { label: "Dashboard", url: "/" },
-  { label: "Transaction", url: "/transaction" },
+  { label: "Transactions", url: "/transactions" },
   { label: "Analysis", url: "/analysis" },
   { label: "Settings", url: "/settings" },
   { label: "Support", url: "/support" },
