@@ -1,6 +1,6 @@
 import React, { Profiler } from "react";
 import { useStore } from "@nanostores/react";
-import { Box, Typography, Grid, Paper } from "@mui/material";
+import { Box, Typography, Grid, Paper, Grid2 } from "@mui/material";
 import ExportButton from "./ExportButton";
 import DownloadProfilerData from "./DownloadProfilerData";
 import { onRenderCallback } from "../utils/onRenderCallback";
@@ -24,7 +24,7 @@ function Dashboard() {
   return (
     <Profiler id="Dashboard" onRender={onRenderCallback}>
       <Box sx={{ p: 4 }}>
-        <Typography variant="h3" gutterBottom>
+        <Typography variant="h4" color="primary" gutterBottom>
           Financial Summary
         </Typography>
 
@@ -46,7 +46,7 @@ function Dashboard() {
                 */}
 
         {/* Totals Section */}
-        <Grid container spacing={4} sx={{ mt: 4 }}>
+        <Grid container spacing={4} sx={{ mt: 2 }}>
           <Grid item xs={12} md={4}>
             <Paper
               sx={{
@@ -124,18 +124,43 @@ function Dashboard() {
                     - Use the `Statistics` component to show key financial metrics.
                     - Use the `Recommendations` component to display financial advice.
                 */}
+        <Grid container spacing={4} sx={{ mt: 4 }}>
+          <Grid item xs={12} md={6}>
+            {/* <Statistics /> */}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* <Recommendations /> */}
+          </Grid>
+        </Grid>
 
         {/* Charts Section */}
         {/* Instructions:
                     - Use the `AnalysisGraph` component to show a breakdown of income and expenses by category.
                     - Use the `BalanceOverTime` component to show the user's balance over time.
                 */}
+        <Grid container spacing={4} sx={{ mt: 4 }}>
+          <Grid item xs={12} md={6}>
+            {/* <AnalysisGraph /> */}
+          </Grid>
+          <Grid item xs={12} md={6}>
+            {/* <BalanceOverTime /> */}
+          </Grid>
+        </Grid>
 
         {/* Recent Transactions Section */}
         {/* Instructions:
                     - Display a list or table of recent transactions using the `RecentTransactions` component.
                     - Ensure that each transaction shows key details such as description, amount, type, and date.
                 */}
+        <Box
+          sx={{
+            display: "flex",
+            width: "100%",
+          }}
+        >
+          <Typography variant="h5">Recent Transactions</Typography>
+          {/* <RecentTransactions /> */}
+        </Box>
       </Box>
     </Profiler>
   );
