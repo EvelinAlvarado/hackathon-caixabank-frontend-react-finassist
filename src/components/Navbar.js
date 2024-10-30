@@ -23,7 +23,7 @@ import { Link, useNavigate } from "react-router-dom";
 import CaixaBankIconBlue from "../assets/caixabank-icon-blue.png";
 import CaixaBankIcon from "../assets/caixabank-icon.png";
 import { AUTH_LINKS, MENU_ITEMS } from "../constants/navigation";
-import { authStore, logout } from "../stores/authStore";
+import { logout } from "../stores/authStore";
 
 const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -37,18 +37,6 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
       return;
     }
     setDrawerOpen(open);
-  };
-
-  const users = authStore.get().users || [];
-  console.log("Usuarios en el Navbar:", users);
-
-  const handleLogout = () => {
-    logout();
-    console.log(
-      "Usuarios después de logout:",
-      JSON.parse(localStorage.getItem("users"))
-    );
-    navigate("/login");
   };
 
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -74,7 +62,12 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
             </ListItem>
           ))}
           <ListItem key="Logout" disablePadding>
-            <ListItemButton onClick={handleLogout}>
+            <ListItemButton
+              onClick={() => {
+                logout(); // Call the logout function
+                navigate("/login"); // Redirect to login
+              }}
+            >
               <ListItemText primary="Logout" />
             </ListItemButton>
           </ListItem>
@@ -165,10 +158,6 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
               <Button
                 onClick={() => {
                   logout(); // Call the logout function
-                  console.log(
-                    "Usuarios después de logout:",
-                    JSON.parse(localStorage.getItem("users"))
-                  );
                   navigate("/login"); // Redirect to login
                 }}
                 sx={{
