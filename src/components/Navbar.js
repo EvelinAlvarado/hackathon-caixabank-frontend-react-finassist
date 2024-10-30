@@ -23,11 +23,13 @@ import { Link, useNavigate } from "react-router-dom";
 import CaixaBankIconBlue from "../assets/caixabank-icon-blue.png";
 import CaixaBankIcon from "../assets/caixabank-icon.png";
 import { AUTH_LINKS, MENU_ITEMS } from "../constants/navigation";
-import { logout } from "../stores/authStore";
+import { authStore, logout } from "../stores/authStore";
+import { useStore } from "@nanostores/react";
 
-const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
+const Navbar = ({ toggleTheme, isDarkMode }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
+  const { isAuthenticated, currentUser } = useStore(authStore);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -39,11 +41,12 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
     setDrawerOpen(open);
   };
 
-  const storedUser = JSON.parse(localStorage.getItem("user"));
   const avatarLetter =
-    isAuthenticated && storedUser?.email
-      ? storedUser.email[0].toUpperCase()
+    isAuthenticated && currentUser?.email
+      ? currentUser.email[0].toUpperCase()
       : "";
+  // currentUser &&
+  //   console.log("currentUser after login or register: ", currentUser);
 
   const DrawerList = (
     <Box
@@ -142,7 +145,6 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
               {MENU_ITEMS.map((link) => (
                 <Button
                   key={link.label}
-                  /* onClick={handleCloseNavMenu} */
                   component={Link}
                   to={link.url}
                   sx={{
@@ -175,7 +177,6 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
               {AUTH_LINKS.map((link) => (
                 <Button
                   key={link.label}
-                  /* onClick={handleCloseNavMenu} */
                   component={Link}
                   to={link.url}
                   sx={{
@@ -209,15 +210,14 @@ const Navbar = ({ toggleTheme, isDarkMode, isAuthenticated }) => {
                             - Use an Avatar component and display the user's email as a tooltip or alt text. */}
             {isAuthenticated && (
               <IconButton>
-                <Avatar alt={storedUser.email}>{avatarLetter}</Avatar>
+                <Avatar alt={currentUser.email}>{avatarLetter}</Avatar>
               </IconButton>
             )}
           </Box>
         </Toolbar>
       </AppBar>
 
-      {/* <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-        <Box> */}
+
       {/* Drawer navigation links */}
       {/* Instructions:
                         - Display navigation links inside the drawer.

@@ -54,11 +54,7 @@ function App() {
               minHeight: "100vh", // Ensures footer is at the bottom
             }}
           >
-            <Navbar
-              toggleTheme={toggleTheme}
-              isDarkMode={isDarkMode}
-              isAuthenticated={auth.isAuthenticated}
-            />
+            <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
             <Container sx={{ flex: 1, mt: 4 }}>
               <BudgetAlert /> {/* Mostrar BudgetAlert aquí */}
               <Routes>

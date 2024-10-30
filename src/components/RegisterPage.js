@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Box, Button, TextField, Typography, Alert } from "@mui/material";
-import { login } from "../stores/authStore";
+import { authStore, login, registerUser } from "../stores/authStore";
+import { useStore } from "@nanostores/react";
 
 function RegisterPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,9 @@ function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
+  const auth = useStore(authStore); // Get usersList status from auth store
+
+  const usersList = auth.usersList;
 
   const handleRegister = (e) => {
     e.preventDefault();
@@ -33,31 +37,38 @@ function RegisterPage() {
     }
 
     // Check if the email is already registered in localStorage.
-    const storedUser = JSON.parse(localStorage.getItem("user"));
+    console.log("userList before pushing newUser:", usersList);
+
     // - Retrieve the existing user from localStorage and verify if the entered email already exists.
+    const userExists = usersList.find((user) => user.email === email);
     // - If the email exists, set an error message.
-    if (storedUser && storedUser.email === email) {
+    if (userExists) {
       setError("Email is already registered. Please Login");
       return;
     }
 
     // Save the new user's data to localStorage.
-    // - If validation passes, store the new user's email and password in localStorage.
     const newUser = { email, password };
-    localStorage.setItem("user", JSON.stringify(newUser));
+
     console.log("new user: ", newUser);
 
-    // Automatically log the user in after successful registration.
-    // - Call the `login` function to set the authenticated user in the store.
-    login(newUser);
-
-    // Redirect the user to the dashboard.
-    // - After successful registration and login, redirect the user to the home/dashboard page.
-
-    setSuccess(true);
-    setTimeout(() => {
-      navigate("/");
-    }, 2000);
+    try {
+      // - If validation passes, store the new user's email and password in localStorage.
+      registerUser(newUser);
+      // Automatically log the user in after successful registration.
+      // - Call the `login` function to set the authenticated user in the store.
+      login(newUser);
+      // console.log("New user registered successfully:", newUser);
+      // Redirect the user to the dashboard.
+      // - After successful registration and login, redirect the user to the home/dashboard page.
+      // console.log("userList after pushing newUser:", usersList);
+      setSuccess(true);
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
+    } catch (error) {
+      setError("Registration failed. Please try again.");
+    }
   };
 
   return (

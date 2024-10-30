@@ -1,7 +1,8 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { login } from "../stores/authStore";
+import { authStore, login } from "../stores/authStore";
 import { Box, Button, TextField, Typography, Alert, Grid } from "@mui/material";
+import { useStore } from "@nanostores/react";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -9,12 +10,20 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [showCredentials, setShowCredentials] = useState(false);
   const navigate = useNavigate();
+  const { usersList, currentUser } = useStore(authStore); // Get all status from auth store
 
   const defaultCredentials = {
     email: "default@example.com",
     password: "password123",
   };
   console.log(email, password);
+
+  // console.log(
+  //   "currentUser before handleLogin: ",
+  //   currentUser,
+  //   "usersList:",
+  //   usersList
+  // );
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -31,8 +40,6 @@ function LoginPage() {
     // Validate credentials
     // Instructions:
     // - Check if the entered credentials match the default credentials or the stored user credentials.
-    const storedUser = JSON.parse(localStorage.getItem("user"));
-
     // Check for default credentials
     if (
       email === defaultCredentials.email &&
@@ -45,17 +52,19 @@ function LoginPage() {
     }
 
     // - If valid, call the `login` function and navigate to the homepage.
-    if (
-      storedUser &&
-      email === storedUser.email &&
-      password === storedUser.password
-    ) {
-      login(storedUser);
-      navigate("/");
-      return;
+    const userExists = usersList.find((user) => user.email === email);
+
+    if (userExists) {
+      if (userExists.password === password) {
+        login(userExists);
+        navigate("/");
+      } else {
+        setError("Incorrect password. Please try again.");
+      }
+    } else {
+      // - If invalid, set an error message.
+      setError("Invalid credentials. Please register first.");
     }
-    // - If invalid, set an error message.
-    setError("Invalid credentials.");
   };
 
   const handleShowDefaultCredentials = () => {

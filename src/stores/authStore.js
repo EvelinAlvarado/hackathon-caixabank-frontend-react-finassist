@@ -1,22 +1,50 @@
-import { atom } from 'nanostores';
+import { atom } from "nanostores";
 
 export const authStore = atom({
-    isAuthenticated: localStorage.getItem('isAuthenticated') === 'true',
-    user: JSON.parse(localStorage.getItem('user')) || null,
+  isAuthenticated: localStorage.getItem("isAuthenticated") === "false",
+  currentUser: JSON.parse(localStorage.getItem("currentUser")) || null,
+  usersList: JSON.parse(localStorage.getItem("usersList")) || [],
 });
 
-if (process.env.NODE_ENV === 'development') {
-    window.authStore = authStore;
+if (process.env.NODE_ENV === "development") {
+  window.authStore = authStore;
 }
 
 export const login = (userData) => {
-    authStore.set({ isAuthenticated: true, user: userData });
-    localStorage.setItem('isAuthenticated', 'true');
-    localStorage.setItem('user', JSON.stringify(userData));
+  authStore.set({
+    ...authStore.get(),
+    isAuthenticated: true,
+    currentUser: userData,
+  });
+  localStorage.setItem("isAuthenticated", "true");
+  localStorage.setItem("currentUser", JSON.stringify(userData));
 };
 
 export const logout = () => {
-    authStore.set({ isAuthenticated: false, user: null });
-    localStorage.removeItem('isAuthenticated');
-    localStorage.removeItem('user');
+  authStore.set({
+    ...authStore.get(),
+    isAuthenticated: false,
+    currentUser: null,
+  });
+  localStorage.removeItem("isAuthenticated");
+  localStorage.removeItem("currentUser");
+};
+
+export const registerUser = (newUser) => {
+  const currentState = authStore.get();
+
+  /* const emailExists = currentState.usersList.some(
+    (user) => user.email === newUser.email
+  );
+
+  if (emailExists) {
+    throw new Error("This email already exist.");
+  } */
+  const updatedUsersList = [...currentState.usersList, newUser];
+
+  authStore.set({
+    ...currentState,
+    usersList: updatedUsersList,
+  });
+  localStorage.setItem("usersList", JSON.stringify(updatedUsersList));
 };
