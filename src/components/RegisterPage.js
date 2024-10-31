@@ -76,7 +76,7 @@ function RegisterPage() {
       sx={{
         maxWidth: 400,
         mx: "auto",
-        mt: 8,
+        marginY: 8,
         p: 2,
         border: "1px solid #ddd",
         borderRadius: 2,

@@ -117,7 +117,7 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             className="App-logo"
             alt="CaixaBank icon"
             src={isDarkMode ? CaixaBankIcon : CaixaBankIconBlue}
-            sx={{ display: { xs: "none", lg: "flex" }, mr: 1 }}
+            sx={{ display: { xs: "none", md: "flex" }, mr: 1 }}
           />
 
           {/* Navigation links */}
@@ -216,7 +216,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           </Box>
         </Toolbar>
       </AppBar>
-
 
       {/* Drawer navigation links */}
       {/* Instructions:
