@@ -3,6 +3,7 @@ import { useStore } from "@nanostores/react";
 import { userSettingsStore } from "../stores/userSettingsStore";
 import {
   budgetAlertStore,
+  resetBudgetAlert,
   updateBudgetAlert,
 } from "../stores/budgetAlertStore"; // Importar el store de alertas
 import {
@@ -24,6 +25,9 @@ function Settings() {
   const transactions = useStore(transactionsStore);
 
   const [budgetExceeded, setBudgetExceeded] = useState(false);
+  const [alertsEnabled, setAlertsEnabled] = useState(
+    userSettings.alertsEnabled
+  );
   const [successMessage, setSuccessMessage] = useState("");
   const [error, setError] = useState("");
   const [totalBudgetLimit, setTotalBudgetLimit] = useState(
@@ -33,23 +37,76 @@ function Settings() {
     userSettings.categoryLimits
   );
 
+  useEffect(() => {
+    setAlertsEnabled(userSettings.alertsEnabled);
+    setTotalBudgetLimit(userSettings.totalBudgetLimit);
+    setCategoryLimits(userSettings.categoryLimits);
+  }, [userSettings]);
+
+  const handleOnChangeAlertsEnabled = (e) => {
+    const isChecked = e.target.checked;
+    setAlertsEnabled(isChecked);
+    userSettingsStore.set({
+      ...userSettings,
+      alertsEnabled: isChecked,
+    });
+  };
+
   const handleCategoryChange = (event, category) => {
-    const value = event.target.value;
+    const value = parseFloat(event.target.value);
     setCategoryLimits((prevLimits) => ({
       ...prevLimits,
-      [category]: value,
+      [category]: !isNaN(value) && value >= 0 ? value : 0,
     }));
   };
 
   const handleSave = () => {
-    // Instructions:
+    const categoriesValues = Object.values(categoryLimits);
+
+    const totalCategoryLimits = categoriesValues.reduce(
+      (acc, value) => acc + value,
+      0
+    );
+
     // - Validate the total category limits.
-    // - If the total category limits exceed the total budget limit, set an error message.
-    // - If validation passes, clear the error message and save the updated settings to the store.
-    // - After saving, display a success message indicating that the settings were saved successfully.
-    // Instructions:
-    // - Check if the total expense exceeds the total budget limit.
-    // - If exceeded, set the budgetExceeded state to true and update the budget alert.
+    const isAnyCategoryExceeded = categoriesValues.some(
+      (value) => value > totalBudgetLimit
+    );
+
+    if (isAnyCategoryExceeded) {
+      setSuccessMessage("");
+      // - If the total category limits exceed the total budget limit, set an error message.
+      setError(
+        `The total limits cannot exceed the total budget limit of ${totalBudgetLimit} €`
+      );
+      return;
+      // - Check if the total expense exceeds the total budget limit.
+    } else if (totalCategoryLimits > totalBudgetLimit) {
+      setSuccessMessage("");
+      setError("");
+      // - If exceeded, set the budgetExceeded state to true and update the budget alert.
+      setBudgetExceeded(true);
+      updateBudgetAlert(
+        `The total limits exceed your budget limit of ${totalBudgetLimit} €!`
+      );
+      return;
+    } else {
+      setError("");
+      setBudgetExceeded(false);
+      // - If validation passes, clear the error message and save the updated settings to the store.
+      userSettingsStore.set({
+        ...userSettings,
+        totalBudgetLimit,
+        categoryLimits,
+        alertsEnabled,
+      });
+      console.log("userSettingsStore:", userSettingsStore.value);
+      // - Check if the total expense exceeds the total budget limit.
+
+      // - After saving, display a success message indicating that the settings were saved successfully.
+      setSuccessMessage("Settings saved successfully!");
+      resetBudgetAlert();
+    }
   };
 
   return (
@@ -62,6 +119,8 @@ function Settings() {
         control={<Switch color="primary" />}
         label="Enable Alerts"
         // Instructions: Add `checked` and `onChange` to control the `alertsEnabled` state
+        checked={alertsEnabled}
+        onChange={handleOnChangeAlertsEnabled}
       />
 
       <Paper sx={{ padding: 2, mt: 2, boxShadow: 3, borderRadius: 2 }}>
@@ -114,6 +173,7 @@ function Settings() {
           fullWidth
           sx={{ boxShadow: 2 }}
           // Instructions: Add `onClick` handler to save the settings by calling `handleSave`
+          onClick={handleSave}
         >
           Save Settings
         </Button>
