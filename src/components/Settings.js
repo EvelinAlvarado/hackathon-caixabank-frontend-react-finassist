@@ -82,7 +82,11 @@ function Settings() {
       </Paper>
 
       <Paper sx={{ padding: 2, mt: 2, boxShadow: 3, borderRadius: 2 }}>
-        <Typography variant="h6" color="text.secondary">
+        <Typography
+          variant="h6"
+          color="tex
+        t.secondary"
+        >
           Category Budget Limits (€)
         </Typography>
         <Grid container spacing={2} sx={{ mt: 1 }}>
