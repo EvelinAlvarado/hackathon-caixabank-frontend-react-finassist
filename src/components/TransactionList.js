@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useCallback } from "react";
+import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { useStore } from "@nanostores/react";
-import { transactionsStore } from "../stores/transactionStore";
+import { setTransactions, transactionsStore } from "../stores/transactionStore";
 import {
   Table,
   TableBody,
@@ -16,10 +16,13 @@ import {
   FormControl,
   Box,
   Typography,
+  TablePagination,
 } from "@mui/material";
 import { allCategories } from "../constants/categories";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import TransactionForm from "./TransactionForm";
+import TransactionRow from "./TransactionRow";
+import { exportToExcel } from "../utils/exportToExcel";
 
 function TransactionList() {
   const transactions = useStore(transactionsStore);
@@ -30,6 +33,16 @@ function TransactionList() {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [openDialog, setOpenDialog] = useState(false);
+  const [transactionToEdit, setTransactionToEdit] = useState(null);
+
+  const handleChangePage = (event, newPage) => {
+    setPage(newPage);
+  };
+
+  const handleChangeRowsPerPage = (event) => {
+    setRowsPerPage(+event.target.value);
+    setPage(0);
+  };
 
   const handleClickOpen = () => {
     setOpenDialog(true);
@@ -37,6 +50,7 @@ function TransactionList() {
 
   const handleClose = () => {
     setOpenDialog(false);
+    setTransactionToEdit(null);
   };
 
   // Implement delete functionality
@@ -46,6 +60,8 @@ function TransactionList() {
   const deleteTransaction = useCallback(
     (id) => {
       // Implement functionality to delete a transaction
+      const updatedTransactions = transactions.filter((t) => t.id !== id);
+      setTransactions(updatedTransactions);
     },
     [transactions]
   );
@@ -56,7 +72,34 @@ function TransactionList() {
   // - Ensure the updated transaction is saved in the store.
   const handleEdit = useCallback((transaction) => {
     // Implement functionality to edit a transaction
+    setTransactionToEdit(transaction);
+    handleClickOpen();
   }, []);
+
+  const filteredTransactions = useMemo(() => {
+    const categoryAndType = transactions.filter((transaction) => {
+      const matchesCategory =
+        filterCategory === "" || transaction.category === filterCategory;
+      const matchesType = filterType === "" || transaction.type === filterType;
+
+      return matchesCategory && matchesType;
+    });
+
+    const sortedTransactions = categoryAndType.sort((a, b) => {
+      if (sortField === "amount") {
+        return b.amount - a.amount;
+      } else if (sortField === "date") {
+        return new Date(b.date) - new Date(a.date);
+      }
+      return 0; // No sorting if sortField is not specified
+    });
+
+    return sortedTransactions;
+  }, [transactions, filterCategory, filterType, sortField]);
+
+  useEffect(() => {
+    setPage(0); // Reset pagination whenever filters change
+  }, [filterCategory, filterType]);
 
   return (
     <Box sx={{ mt: 4 }}>
@@ -72,18 +115,24 @@ function TransactionList() {
         <Button
           variant="contained"
           color="primary"
-          onClick={handleClickOpen}
-          /* onClick={() => {
-          }} */
           /* Implement functionality to add transaction */
+          onClick={handleClickOpen}
         >
           Add Transaction
         </Button>
-        <TransactionForm handleClose={handleClose} openDialog={openDialog} />
+        <TransactionForm
+          transactionToEdit={transactionToEdit}
+          handleClose={handleClose}
+          openDialog={openDialog}
+        />
         <Button
           variant="contained"
           color="primary"
           startIcon={<FileDownloadIcon />}
+          onClick={() => {
+            console.log("Button clicked");
+            exportToExcel(transactions);
+          }}
         >
           Export Transitions
         </Button>
@@ -114,7 +163,9 @@ function TransactionList() {
             <MenuItem value="">All</MenuItem>
             {/* Add additional categories dynamically */}
             {allCategories.map((category) => (
-              <MenuItem value={category}>{category}</MenuItem>
+              <MenuItem key={category} value={category}>
+                {category}
+              </MenuItem>
             ))}
           </Select>
         </FormControl>
@@ -151,7 +202,8 @@ function TransactionList() {
                 - Render the transactions in a table format using Material UI's `Table` component.
                 - For each transaction, display the following details: description, amount, type, category, and date.
                 - Implement the action buttons (Edit, Delete) within each row for managing transactions. */}
-      <TableContainer component={Paper}>
+
+      <TableContainer component={Paper} sx={{ marginY: 4 }}>
         <Table>
           <TableHead>
             <TableRow>
@@ -167,36 +219,25 @@ function TransactionList() {
             {/* Map over the transactions and render each transaction as a row.
                             - For each row, add logic for Edit and Delete actions.
                             - Display the transaction data in the respective table cells. */}
-            {transactions.map((transaction) => (
-              <TableRow key={transaction.id}>
-                <TableCell>{transaction.description}</TableCell>
-                <TableCell>{transaction.amount.toFixed(2)} €</TableCell>
-                <TableCell>
-                  {transaction.type === "income" ? "Income" : "Expense"}
-                </TableCell>
-                <TableCell>{transaction.category}</TableCell>
-                <TableCell>
-                  {new Date(transaction.date).toLocaleDateString("en-US")}
-                </TableCell>
-                <TableCell>
-                  <Button
-                    variant="outlined"
-                    onClick={() => handleEdit(transaction)} // Open edit dialog
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    variant="outlined"
-                    color="secondary"
-                    onClick={() => deleteTransaction(transaction.id)} // Delete transaction
-                  >
-                    Delete
-                  </Button>
-                </TableCell>
-              </TableRow>
-            ))}
+            {filteredTransactions
+              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+              .map((transaction) => (
+                <TransactionRow
+                  transaction={transaction}
+                  onEdit={() => handleEdit(transaction)}
+                  onDelete={() => deleteTransaction(transaction.id)}
+                />
+              ))}
           </TableBody>
         </Table>
+        <TablePagination
+          rowsPerPageOptions={[5, 10, 25, 50, 100]}
+          count={filteredTransactions.length}
+          rowsPerPage={rowsPerPage}
+          page={page}
+          onPageChange={handleChangePage}
+          onRowsPerPageChange={handleChangeRowsPerPage}
+        />
       </TableContainer>
     </Box>
   );

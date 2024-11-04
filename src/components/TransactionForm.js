@@ -18,6 +18,7 @@ import {
   FormControl,
   Grid,
   Box,
+  Alert,
 } from "@mui/material";
 import { categoryKeywords } from "../constants/categoryKeywords";
 import { allCategories } from "../constants/categories";
@@ -34,52 +35,93 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
   const [type, setType] = useState("expense");
   const [category, setCategory] = useState("Other Expenses");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
+  const [error, setError] = useState("");
 
   // Implement the function to assign a category based on description keywords
   const assignCategory = (desc) => {
     // Instructions:
-    // - Loop through `categoryKeywords` to find matching keywords
-    // - If a keyword is found in the description, return the category
-    // - Return 'Other Expenses' if no category is found
     const lowerDesc = desc.toLowerCase();
 
-    for (let category in categoryKeywords) {
-      const keywords = categoryKeywords[category];
+    // - Loop through `categoryKeywords` to find matching keywords
+    for (let cat in categoryKeywords) {
+      const keywords = categoryKeywords[cat];
+      console.log("Revisando categoría:", cat);
 
-      for (let i = 0; i < keywords.length; i++) {
-        const keyword = keywords[i].toLowerCase();
-        if (lowerDesc.includes(keyword)) {
-          return category;
+      for (let keyword of keywords) {
+        if (keyword.toLowerCase().startsWith(lowerDesc)) {
+          // console.log(
+          //   `Encontrada palabra clave: "${keyword}" en descripción, asignando categoría "${cat}"`
+          // );
+          // - If a keyword is found in the description, return the category
+          return cat;
         }
       }
     }
+    // - Return 'Other Expenses' if no category is found
     return "Other Expenses";
+  };
+
+  const handleDescriptionChange = (e) => {
+    const description = e.target.value;
+    setDescription(description);
+
+    // const assignedCategory = assignCategory(description);
+    // console.log("Categoría asignada:", assignedCategory);
+    // setCategory(assignedCategory);
+  };
+
+  const resetForm = () => {
+    setDescription("");
+    setAmount("");
+    setType("expense");
+    setCategory("Other Expenses");
+    setDate(new Date().toISOString().split("T")[0]);
+    setError("");
   };
 
   // Auto-assign a category if adding a new transaction
   useEffect(() => {
-    if (!transactionToEdit) {
+    if (!transactionToEdit && description) {
       // Instructions:
       // - Call the `assignCategory` function to determine the category based on the description
       // - Then, update the category state with the result
+      setCategory(assignCategory(description));
     }
 
     // Instructions: Add the proper dependencies to the useEffect hook
-  }, []);
+  }, [description, transactionToEdit]);
+
+  useEffect(() => {
+    if (transactionToEdit) {
+      setDescription(transactionToEdit.description);
+      setAmount(transactionToEdit.amount); //.toString()
+      setType(transactionToEdit.type);
+      setCategory(transactionToEdit.category);
+      setDate(transactionToEdit.date);
+    } else {
+      resetForm();
+    }
+  }, [transactionToEdit]);
+
+  useEffect(() => {
+    if (!openDialog) {
+      resetForm();
+    }
+  }, [openDialog]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
     // Instructions:
     // - Validate that all fields are filled in.
-    // - If editing, update the transaction in the store.
-    // - If adding a new transaction, create it and save it to the store.
-    // - The transaction type should be either "income" or "expense".
-    // - Ensure the transaction has the following structure: { id, description, amount, type, category, date }
-    if (!description || !amount || !type || !category || !date) {
-      alert("All fields are required.");
+    if (!description || !amount || !category) {
+      setError("All fields are required.");
       return;
+    } else {
+      setError("");
     }
 
+    // - The transaction type should be either "income" or "expense".
+    // - Ensure the transaction has the following structure: { id, description, amount, type, category, date }
     const transaction = {
       id: transactionToEdit ? transactionToEdit.id : Date.now(),
       description,
@@ -89,12 +131,15 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
       date,
     };
 
+    // - If editing, update the transaction in the store.
     if (transactionToEdit) {
+      // Find transaction id
       const updatedTransactions = transactions.map((t) =>
         t.id === transactionToEdit.id ? transaction : t
       );
       setTransactions(updatedTransactions);
     } else {
+      // - If adding a new transaction, create it and save it to the store.
       addTransaction(transaction);
     }
     console.log("transaction:", transaction);
@@ -113,10 +158,9 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
               <TextField
                 label="Description"
                 value={description}
-                onChange={(e) => setDescription(e.target.value)}
+                onChange={handleDescriptionChange}
                 fullWidth
                 margin="normal"
-                required
                 name="description"
               />
             </Grid>
@@ -128,13 +172,12 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
                 onChange={(e) => setAmount(e.target.value)}
                 fullWidth
                 margin="normal"
-                required
                 inputProps={{ min: 0, step: "0.01" }}
                 name="amount"
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth margin="normal" required>
+              <FormControl fullWidth margin="normal">
                 <InputLabel id="type-label">Type</InputLabel>
                 <Select
                   labelId="type-label"
@@ -162,11 +205,14 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
                 >
                   {/* Instructions: Use the `allCategories` imported file to render the categories as menu items */}
                   {allCategories.map((category) => (
-                    <MenuItem value={category}>{category}</MenuItem>
+                    <MenuItem
+                      key={category}
+                      value={category}
+                      selected={category === "Other Expenses"}
+                    >
+                      {category}
+                    </MenuItem>
                   ))}
-                  <MenuItem value="Other Expenses" selected>
-                    Other Expenses
-                  </MenuItem>
                 </Select>
               </FormControl>
             </Grid>
@@ -205,6 +251,11 @@ function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
             </Button>
           </Box>
         </DialogActions>
+        {error && (
+          <DialogContent>
+            <Alert severity="error">{error}</Alert>
+          </DialogContent>
+        )}
       </form>
     </Dialog>
   );
