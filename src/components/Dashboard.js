@@ -176,7 +176,7 @@ function Dashboard() {
         >
           <Typography variant="h5">Recent Transactions</Typography>
           <Suspense fallback={<CircularProgress />}>
-            <RecentTransactions />
+            <RecentTransactions transactions={transactions} />
           </Suspense>
         </Box>
       </Box>

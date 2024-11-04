@@ -22,7 +22,6 @@ import {
 } from "@mui/material";
 import { categoryKeywords } from "../constants/categoryKeywords";
 import { allCategories } from "../constants/categories";
-import { Input } from "@mui/icons-material";
 
 function TransactionForm({ transactionToEdit, handleClose, openDialog }) {
   const transactions = useStore(transactionsStore);

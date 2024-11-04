@@ -14,7 +14,12 @@ function RecentTransactions({ transactions }) {
   // Instructions:
   // - Sort the transactions by date, showing the most recent first.
   // - Extract only the last 5 transactions for display.
-  const recentTransactions = []; // Implement logic to get the last 5 transactions
+  const recentTransactions = [...transactions]
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5);
+  // Implement logic to get the last 5 transactions
+
+  console.log("recentTransactions:", recentTransactions);
 
   return (
     <div>
@@ -33,10 +38,19 @@ function RecentTransactions({ transactions }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Instructions:
-                            - Map over the recentTransactions array and render each transaction in a table row.
-                            - For each row, display the transaction's description, amount, type (income/expense), category, and date.
-                            - Ensure that the amount is formatted to two decimal places. */}
+            {recentTransactions.map((transaction) => (
+              <TableRow key={transaction.id}>
+                <TableCell>{transaction.description}</TableCell>
+                <TableCell>{transaction.amount.toFixed(2)}</TableCell>
+                <TableCell>
+                  {transaction.type === "income" ? "Income" : "Expense"}
+                </TableCell>
+                <TableCell>{transaction.category}</TableCell>
+                <TableCell>
+                  {new Date(transaction.date).toLocaleDateString("en-US")}
+                </TableCell>
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
