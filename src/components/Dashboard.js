@@ -1,13 +1,6 @@
 import React, { Profiler, Suspense } from "react";
 import { useStore } from "@nanostores/react";
-import {
-  Box,
-  Typography,
-  Grid,
-  Paper,
-  Grid2,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Typography, Grid, Paper, CircularProgress } from "@mui/material";
 import ExportButton from "./ExportButton";
 import DownloadProfilerData from "./DownloadProfilerData";
 import { onRenderCallback } from "../utils/onRenderCallback";
@@ -24,9 +17,18 @@ function Dashboard() {
   const transactions = useStore(transactionsStore);
 
   // Replace the placeholder values with calculations for total income, total expenses, and balance.
-  const totalIncome = 0; // Calculate total income from transactions
-  const totalExpense = 0; // Calculate total expenses from transactions
-  const balance = 0; // Calculate balance based on total income and expenses
+  // Calculate total income from transactions
+  const totalIncome = [...transactions]
+    .filter((t) => t.type === "income")
+    .reduce((total, t) => total + t.amount, 0);
+  console.log("totalIncome:", totalIncome);
+  // Calculate total expenses from transactions
+  const totalExpense = [...transactions]
+    .filter((t) => t.type === "expense")
+    .reduce((total, t) => total + t.amount, 0);
+  console.log("totalExpense:", totalExpense);
+  // Calculate balance based on total income and expenses
+  const balance = totalIncome - totalExpense;
 
   return (
     <Profiler id="Dashboard" onRender={onRenderCallback}>
@@ -43,7 +45,7 @@ function Dashboard() {
             width: "100%",
           }}
         >
-          <ExportButton />
+          <ExportButton data={transactions} label="Export Transactions" />
           <DownloadProfilerData />
         </Box>
         {/* Instructions:
@@ -72,7 +74,7 @@ function Dashboard() {
                 data-testid="total-income"
               >
                 {/* Show total income */}
-                0.00 €
+                {totalIncome.toFixed(2)} €
               </Typography>
             </Paper>
           </Grid>
@@ -94,7 +96,7 @@ function Dashboard() {
                 data-testid="total-expenses"
               >
                 {/* Show total expenses */}
-                0.00 €
+                {totalExpense.toFixed(2)} €
               </Typography>
             </Paper>
           </Grid>
@@ -112,11 +114,15 @@ function Dashboard() {
               </Typography>
               <Typography
                 variant="h5"
-                sx={{ color: "#2e7d32" }}
+                sx={{
+                  color: `${
+                    totalIncome > totalExpense ? "#2e7d32" : "#d32f2f"
+                  }`,
+                }}
                 data-testid="balance"
               >
                 {/* Show the balance */}
-                +0.00 €
+                {`${balance >= 0 ? "+" : "-"}${Math.abs(balance).toFixed(2)}`} €
               </Typography>
               {/* Instructions:
                                 - If the balance is negative, show a warning message.

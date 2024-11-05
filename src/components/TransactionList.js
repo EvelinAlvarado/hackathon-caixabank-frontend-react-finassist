@@ -23,6 +23,7 @@ import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import TransactionForm from "./TransactionForm";
 import TransactionRow from "./TransactionRow";
 import { exportToExcel } from "../utils/exportToExcel";
+import ExportButton from "./ExportButton";
 
 function TransactionList() {
   const transactions = useStore(transactionsStore);
@@ -125,17 +126,7 @@ function TransactionList() {
           handleClose={handleClose}
           openDialog={openDialog}
         />
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<FileDownloadIcon />}
-          onClick={() => {
-            console.log("Button clicked");
-            exportToExcel(transactions);
-          }}
-        >
-          Export Transitions
-        </Button>
+        <ExportButton data={transactions} label="Export Transactions" />
       </Box>
 
       <Button
