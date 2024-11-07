@@ -24,6 +24,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import ExportButton from "./ExportButton"; // Import the refactored ExportButton
+import getWeekNumber from "../utils/getWeekNumber";
 
 function Analysis() {
   const transactions = useStore(transactionsStore);
@@ -43,7 +44,42 @@ function Analysis() {
 
   // Prepare the data for the trend analysis report based on the selected time frame (daily, weekly, monthly, yearly).
   // Each object in the array should have the structure: { key, income, expense }
-  const trendData = []; // Replace with logic to group transactions by the selected time frame.
+  // Replace with logic to group transactions by the selected time frame.
+  const trendData = transactions.reduce((acc, transaction) => {
+    const date = new Date(transaction.date);
+    let key = "";
+
+    if (timeFrame === "daily") {
+      key = date.toLocaleDateString();
+    } else if (timeFrame === "weekly") {
+      key = `Week ${getWeekNumber(date)}`;
+    } else if (timeFrame === "monthly") {
+      key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`;
+    } else if (timeFrame === "yearly") {
+      key = date.getFullYear().toString();
+    }
+
+    const existingAcc = acc.find((item) => item.key === key);
+
+    if (existingAcc) {
+      existingAcc.income +=
+        transaction.type === "income" ? transaction.amount : 0;
+      existingAcc.expense +=
+        transaction.type === "expense" ? transaction.amount : 0;
+    } else {
+      acc.push({
+        key,
+        income: transaction.type === "income" ? transaction.amount : 0,
+        expense: transaction.type === "expense" ? transaction.amount : 0,
+      });
+    }
+
+    return acc;
+  }, []);
+  console.log("trendData and ", timeFrame, ": ", trendData);
 
   // Prepare the data for the budget vs actual report.
   // Each object in the array should have the structure: { key, budget, actual }
