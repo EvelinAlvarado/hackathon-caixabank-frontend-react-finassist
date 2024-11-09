@@ -25,9 +25,11 @@ import {
 } from "recharts";
 import ExportButton from "./ExportButton"; // Import the refactored ExportButton
 import getWeekNumber from "../utils/getWeekNumber";
+import { userSettingsStore } from "../stores/userSettingsStore";
 
 function Analysis() {
   const transactions = useStore(transactionsStore);
+  const userSettings = useStore(userSettingsStore);
 
   const [timeFrame, setTimeFrame] = useState("monthly");
   const [reportType, setReportType] = useState("trend");
@@ -83,7 +85,39 @@ function Analysis() {
 
   // Prepare the data for the budget vs actual report.
   // Each object in the array should have the structure: { key, budget, actual }
-  const budgetData = []; // Replace with logic to compare the actual expenses against the budget.
+  // Replace with logic to compare the actual expenses against the budget.
+  console.log(
+    "totalBudgetLimit:",
+    userSettings.totalBudgetLimit,
+    typeof userSettings.totalBudgetLimit,
+    Number(userSettings.totalBudgetLimit)
+  );
+  const budgetData = transactions.reduce((acc, transaction) => {
+    const date = new Date(transaction.date);
+    let key = "";
+
+    if (reportType === "budget") {
+      key = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+        2,
+        "0"
+      )}`;
+    }
+
+    const existingAcc = acc.find((item) => item.key === key);
+
+    if (existingAcc) {
+      existingAcc.Actual +=
+        transaction.type === "expense" ? transaction.amount : 0;
+    } else {
+      acc.push({
+        key,
+        Budget: Number(userSettings.totalBudgetLimit),
+        Actual: transaction.type === "expense" ? transaction.amount : 0,
+      });
+    }
+    return acc;
+  }, []);
+  console.log("budgetData: ", budgetData);
 
   return (
     <Box sx={{ mt: 4, p: { xs: 2, md: 4 }, bgcolor: "background.default" }}>
@@ -110,6 +144,7 @@ function Analysis() {
               // Implement logic to update the time frame state
               value={timeFrame}
               onChange={handleChangeTimeFrame}
+              disabled={reportType === "budget"}
             >
               <MenuItem value="daily">Daily</MenuItem>
               <MenuItem value="weekly">Weekly</MenuItem>
@@ -141,7 +176,15 @@ function Analysis() {
                     - Implement the ExportButton component with the appropriate data and headers.
                     - The data and headers should be based on the selected report type. */}
         <Grid item xs={12} sm={6} md={4}>
-          <ExportButton data={[]} filename={""} headers={[""]} />
+          <ExportButton
+            data={reportType === "trend" ? trendData : budgetData}
+            label="Export Report"
+            fileName={
+              reportType === "trend"
+                ? `trend-report-${timeFrame}`
+                : "budget-report"
+            }
+          />
         </Grid>
       </Grid>
 
@@ -194,12 +237,12 @@ function Analysis() {
 
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={budgetData}>
-                  <XAxis dataKey="category" />
+                  <XAxis dataKey="key" />
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="Budget" stackId="a" fill="#FFC658" />
-                  <Bar dataKey="Actual" stackId="a" fill="#FF8042" />
+                  <Bar dataKey="Budget" fill="#FFC658" />
+                  <Bar dataKey="Actual" fill="#FF8042" />
                 </BarChart>
               </ResponsiveContainer>
             </Paper>

@@ -126,7 +126,11 @@ function TransactionList() {
           handleClose={handleClose}
           openDialog={openDialog}
         />
-        <ExportButton data={transactions} label="Export Transactions" />
+        <ExportButton
+          data={transactions}
+          label="Export Transactions"
+          fileName="transactions"
+        />
       </Box>
 
       <Button

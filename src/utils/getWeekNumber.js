@@ -4,16 +4,22 @@ function getWeekNumber(date) {
   //get 1 january
   const startOfYear = new Date(currentDate.getFullYear(), 0, 1);
 
-  // Get the day og january 1 and Modified: Monday=0, tuesday=1,etc
-  const dayNumber = (startOfYear.getDay() + 6) % 7;
+  // find the first sunday
+  const firstSunday = new Date(startOfYear);
+  firstSunday.setDate(firstSunday.getDate() - firstSunday.getDay());
 
-  // find the first thursday
-  startOfYear.setDate(startOfYear.getDate() + (3 - dayNumber));
+  const firstThursday = new Date(startOfYear);
+  firstThursday.setDate(startOfYear.getDate() + (4 - startOfYear.getDay()));
 
-  const daysSinceFirstThursday =
-    (currentDate - startOfYear) / (1000 * 60 * 60 * 24);
+  if (firstThursday < firstSunday) {
+    firstSunday.setDate(firstSunday.getDate() - 7);
+  }
 
-  const weekNumber = Math.floor(daysSinceFirstThursday / 7) + 1;
+  const daysSinceFirstSunday = Math.floor(
+    (currentDate - firstSunday) / (1000 * 60 * 60 * 24)
+  );
+
+  const weekNumber = Math.floor(daysSinceFirstSunday / 7) + 1;
 
   return weekNumber;
 }
