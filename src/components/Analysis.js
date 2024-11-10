@@ -42,12 +42,15 @@ function Analysis() {
   const handleChangeReportType = (e) => {
     setReportType(e.target.value);
   };
-  console.log(reportType);
+
+  const transactionsSorted = transactions.sort(
+    (a, b) => new Date(a.date) - new Date(b.date)
+  );
 
   // Prepare the data for the trend analysis report based on the selected time frame (daily, weekly, monthly, yearly).
   // Each object in the array should have the structure: { key, income, expense }
   // Replace with logic to group transactions by the selected time frame.
-  const trendData = transactions.reduce((acc, transaction) => {
+  const trendData = transactionsSorted.reduce((acc, transaction) => {
     const date = new Date(transaction.date);
     let key = "";
 
@@ -81,18 +84,13 @@ function Analysis() {
 
     return acc;
   }, []);
-  console.log("trendData and ", timeFrame, ": ", trendData);
+  // console.log("trendData and ", timeFrame, ": ", trendData);
 
   // Prepare the data for the budget vs actual report.
   // Each object in the array should have the structure: { key, budget, actual }
   // Replace with logic to compare the actual expenses against the budget.
-  console.log(
-    "totalBudgetLimit:",
-    userSettings.totalBudgetLimit,
-    typeof userSettings.totalBudgetLimit,
-    Number(userSettings.totalBudgetLimit)
-  );
-  const budgetData = transactions.reduce((acc, transaction) => {
+
+  const budgetData = transactionsSorted.reduce((acc, transaction) => {
     const date = new Date(transaction.date);
     let key = "";
 
@@ -117,7 +115,7 @@ function Analysis() {
     }
     return acc;
   }, []);
-  console.log("budgetData: ", budgetData);
+  // console.log("budgetData: ", budgetData);
 
   return (
     <Box sx={{ mt: 4, p: { xs: 2, md: 4 }, bgcolor: "background.default" }}>

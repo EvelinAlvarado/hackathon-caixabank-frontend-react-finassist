@@ -2,7 +2,7 @@ import * as XLSX from "xlsx";
 
 export const exportToExcel = (data, fileName = "data") => {
   const worksheetData = data.map((item) => ({
-    ...item, // You can customize the data mapping if needed
+    ...item,
   }));
 
   const workbook = XLSX.utils.book_new();
