@@ -5,10 +5,9 @@ import {
   userSettingsStore,
 } from "../stores/userSettingsStore";
 import {
-  budgetAlertStore,
   resetBudgetAlert,
   updateBudgetAlert,
-} from "../stores/budgetAlertStore"; // Importar el store de alertas
+} from "../stores/budgetAlertStore";
 import {
   Box,
   Typography,
@@ -21,12 +20,9 @@ import {
   Alert,
 } from "@mui/material";
 import { expenseCategories } from "../constants/categories";
-import { transactionsStore } from "../stores/transactionStore";
 
 function Settings() {
   const userSettings = useStore(userSettingsStore);
-  const transactions = useStore(transactionsStore);
-
   const [budgetExceeded, setBudgetExceeded] = useState(false);
   const [alertsEnabled, setAlertsEnabled] = useState(
     userSettings.alertsEnabled
@@ -49,10 +45,6 @@ function Settings() {
   const handleOnChangeAlertsEnabled = (e) => {
     const isChecked = e.target.checked;
     setAlertsEnabled(isChecked);
-    /* userSettingsStore.set({
-      ...userSettings,
-      alertsEnabled: isChecked,
-    }); */
     setUserSettings({
       ...userSettings,
       alertsEnabled: isChecked,
@@ -82,16 +74,13 @@ function Settings() {
 
     if (isAnyCategoryExceeded) {
       setSuccessMessage("");
-      // - If the total category limits exceed the total budget limit, set an error message.
       setError(
         `The total limits cannot exceed the total budget limit of ${totalBudgetLimit} €`
       );
       return;
-      // - Check if the total expense exceeds the total budget limit.
     } else if (totalCategoryLimits > totalBudgetLimit) {
       setSuccessMessage("");
       setError("");
-      // - If exceeded, set the budgetExceeded state to true and update the budget alert.
       setBudgetExceeded(true);
       updateBudgetAlert(
         `The total limits exceed your budget limit of ${totalBudgetLimit} €!`
@@ -100,23 +89,12 @@ function Settings() {
     } else {
       setError("");
       setBudgetExceeded(false);
-      // - If validation passes, clear the error message and save the updated settings to the store.
-      /* userSettingsStore.set({
-        ...userSettings,
-        totalBudgetLimit,
-        categoryLimits,
-        alertsEnabled,
-      }); */
       setUserSettings({
         ...userSettings,
         totalBudgetLimit,
         categoryLimits,
         alertsEnabled,
       });
-      console.log("userSettingsStore:", userSettingsStore.value);
-      // - Check if the total expense exceeds the total budget limit.
-
-      // - After saving, display a success message indicating that the settings were saved successfully.
       setSuccessMessage("Settings saved successfully!");
       resetBudgetAlert();
     }
@@ -131,7 +109,6 @@ function Settings() {
       <FormControlLabel
         control={<Switch color="primary" />}
         label="Enable Alerts"
-        // Instructions: Add `checked` and `onChange` to control the `alertsEnabled` state
         checked={alertsEnabled}
         onChange={handleOnChangeAlertsEnabled}
       />
@@ -147,7 +124,6 @@ function Settings() {
           margin="normal"
           inputProps={{ min: 0, step: "0.01" }}
           sx={{ mt: 1 }}
-          // Instructions: Bind the value and `onChange` to control the `totalBudgetLimit` state
           value={totalBudgetLimit}
           onChange={(e) => setTotalBudgetLimit(e.target.value)}
         />
@@ -170,7 +146,6 @@ function Settings() {
                 fullWidth
                 margin="normal"
                 inputProps={{ min: 0, step: "0.01" }}
-                // Instructions: Bind value and `onChange` for each category's budget limit state
                 value={categoryLimits[category] || ""}
                 onChange={(event) => handleCategoryChange(event, category)}
               />
@@ -185,7 +160,6 @@ function Settings() {
           color="primary"
           fullWidth
           sx={{ boxShadow: 2 }}
-          // Instructions: Add `onClick` handler to save the settings by calling `handleSave`
           onClick={handleSave}
         >
           Save Settings

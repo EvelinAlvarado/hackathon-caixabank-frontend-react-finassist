@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -35,10 +35,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
   const budgetAlert = useStore(budgetAlertStore);
   const [open, setOpen] = useState(false);
 
-  // useEffect(() => {
-  //   setOpen(budgetAlert.isVisible);
-  // }, [budgetAlert.isVisible]);
-
   const handleClick = () => {
     setOpen(budgetAlert.isVisible);
   };
@@ -48,12 +44,8 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
       return;
     }
 
-    console.log("budgetAlert:", budgetAlert);
-    // setOpen(false);
     resetBudgetAlert();
-    console.log("budgetAlert:", budgetAlert);
   };
-  console.log("budgetAlert:", budgetAlert);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -69,16 +61,9 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
     isAuthenticated && currentUser?.email
       ? currentUser.email[0].toUpperCase()
       : "";
-  // currentUser &&
-  //   console.log("currentUser after login or register: ", currentUser);
 
   const DrawerList = (
-    <Box
-      /* className="App-header" */
-      sx={{ width: 250 }}
-      role="presentation"
-      onClick={toggleDrawer(false)}
-    >
+    <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
       {isAuthenticated ? (
         <List>
           {MENU_ITEMS.map((item) => (
@@ -91,8 +76,8 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           <ListItem key="Logout" disablePadding>
             <ListItemButton
               onClick={() => {
-                logout(); // Call the logout function
-                navigate("/login"); // Redirect to login
+                logout();
+                navigate("/login");
               }}
             >
               <ListItemText primary="Logout" />
@@ -145,11 +130,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           />
 
           {/* Navigation links */}
-          {/* Instructions:
-                        - Implement navigation links for authenticated and unauthenticated users.
-                        - If the user is authenticated, show links like "Dashboard", "Settings", and a "Logout" button.
-                        - If the user is not authenticated, show "Login" and "Register" links. 
-                        - Use the `Link` component from `react-router-dom`. */}
           <Typography
             variant="h6"
             component="div"
@@ -183,8 +163,8 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
               <Divider orientation="vertical" variant="middle" flexItem />
               <Button
                 onClick={() => {
-                  logout(); // Call the logout function
-                  navigate("/login"); // Redirect to login
+                  logout();
+                  navigate("/login");
                 }}
                 sx={{
                   my: 2,
@@ -196,7 +176,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
               </Button>
             </Box>
           ) : (
-            /* implement logic for users no register */
             <Box sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}>
               {AUTH_LINKS.map((link) => (
                 <Button
@@ -237,10 +216,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
             >
               {isDarkMode ? <LightModeIcon /> : <DarkModeIcon />}
             </IconButton>
-            {/* User avatar */}
-            {/* Instructions:
-                            - Display the user's avatar if they are logged in.
-                            - Use an Avatar component and display the user's email as a tooltip or alt text. */}
             {isAuthenticated && (
               <IconButton>
                 <Avatar alt={currentUser.email}>{avatarLetter}</Avatar>
@@ -249,15 +224,6 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           </Box>
         </Toolbar>
       </AppBar>
-
-      {/* Drawer navigation links */}
-      {/* Instructions:
-                        - Display navigation links inside the drawer.
-                        - Links should be based on the user's authentication status.
-                        - For example, show links like "Dashboard", "Transactions", "Settings" if authenticated.
-                        - Use the `Link` component from `react-router-dom`. */}
-      {/* </Box>
-      </Drawer> */}
       {budgetAlert.isVisible && (
         <NotificationPopup
           open={open}

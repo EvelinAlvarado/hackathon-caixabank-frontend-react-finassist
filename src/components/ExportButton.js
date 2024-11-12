@@ -22,7 +22,6 @@ const ExportButton = React.memo(function ExportButton({
   );
 });
 
-// Define types of props for better verification and documentation
 ExportButton.propTypes = {
   data: PropTypes.arrayOf(PropTypes.object).isRequired,
   fileName: PropTypes.string,

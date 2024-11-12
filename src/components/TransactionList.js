@@ -22,7 +22,6 @@ import { allCategories } from "../constants/categories";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import TransactionForm from "./TransactionForm";
 import TransactionRow from "./TransactionRow";
-import { exportToExcel } from "../utils/exportToExcel";
 import ExportButton from "./ExportButton";
 
 function TransactionList() {
@@ -54,25 +53,15 @@ function TransactionList() {
     setTransactionToEdit(null);
   };
 
-  // Implement delete functionality
-  // Instructions:
-  // - Implement the logic to delete a transaction by its ID.
-  // - Make sure the transactions state/store is updated after deletion.
   const deleteTransaction = useCallback(
     (id) => {
-      // Implement functionality to delete a transaction
       const updatedTransactions = transactions.filter((t) => t.id !== id);
       setTransactions(updatedTransactions);
     },
     [transactions]
   );
 
-  // Implement edit functionality
-  // Instructions:
-  // - Implement logic to edit a transaction.
-  // - Ensure the updated transaction is saved in the store.
   const handleEdit = useCallback((transaction) => {
-    // Implement functionality to edit a transaction
     setTransactionToEdit(transaction);
     handleClickOpen();
   }, []);
@@ -92,14 +81,14 @@ function TransactionList() {
       } else if (sortField === "date") {
         return new Date(b.date) - new Date(a.date);
       }
-      return 0; // No sorting if sortField is not specified
+      return 0;
     });
 
     return sortedTransactions;
   }, [transactions, filterCategory, filterType, sortField]);
 
   useEffect(() => {
-    setPage(0); // Reset pagination whenever filters change
+    setPage(0);
   }, [filterCategory, filterType]);
 
   return (
@@ -108,17 +97,8 @@ function TransactionList() {
         Transaction List
       </Typography>
 
-      {/* Add transaction */}
-      {/* Instructions:
-                - Implement the logic to open a form for adding a new transaction.
-                - Trigger the form/modal through the onClick event. */}
       <Box sx={{ display: "flex", gap: 2, marginBottom: 2 }}>
-        <Button
-          variant="contained"
-          color="primary"
-          /* Implement functionality to add transaction */
-          onClick={handleClickOpen}
-        >
+        <Button variant="contained" color="primary" onClick={handleClickOpen}>
           Add Transaction
         </Button>
         <TransactionForm
@@ -142,11 +122,6 @@ function TransactionList() {
         Download Profiler Data
       </Button>
 
-      {/* Filters */}
-      {/* Instructions:
-                - Implement category and type filters using Material UI's `Select` component.
-                - Update the filterCategory and filterType state values when the user makes a selection.
-                - Apply the selected filters to the displayed transactions. */}
       <Box sx={{ display: "flex", gap: 2, my: 2 }}>
         <FormControl sx={{ minWidth: 120 }}>
           <InputLabel id="filter-category-label">Category</InputLabel>
@@ -156,7 +131,6 @@ function TransactionList() {
             onChange={(e) => setFilterCategory(e.target.value)}
           >
             <MenuItem value="">All</MenuItem>
-            {/* Add additional categories dynamically */}
             {allCategories.map((category) => (
               <MenuItem key={category} value={category}>
                 {category}
@@ -193,11 +167,6 @@ function TransactionList() {
       </Box>
 
       {/* Table of transactions */}
-      {/* Instructions:
-                - Render the transactions in a table format using Material UI's `Table` component.
-                - For each transaction, display the following details: description, amount, type, category, and date.
-                - Implement the action buttons (Edit, Delete) within each row for managing transactions. */}
-
       <TableContainer component={Paper} sx={{ marginY: 4 }}>
         <Table>
           <TableHead>
@@ -211,9 +180,6 @@ function TransactionList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {/* Map over the transactions and render each transaction as a row.
-                            - For each row, add logic for Edit and Delete actions.
-                            - Display the transaction data in the respective table cells. */}
             {filteredTransactions
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((transaction) => (

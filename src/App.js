@@ -1,5 +1,3 @@
-// src/App.js
-
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, CssBaseline, Box, Container } from "@mui/material";
@@ -13,30 +11,26 @@ import Footer from "./components/Footer";
 import SupportPage from "./components/SupportPage";
 import LoginPage from "./components/LoginPage";
 import RegisterPage from "./components/RegisterPage";
-import ProtectedRoute from "./components/ProtectedRoute"; // Import for route protection
-import { authStore } from "./stores/authStore"; // Import auth store for authentication state
-import { useStore } from "@nanostores/react"; // Nanostores to track auth
-import BudgetAlert from "./components/BudgetAlert"; // Importar BudgetAlert
+import ProtectedRoute from "./components/ProtectedRoute";
+import { authStore } from "./stores/authStore";
+import { useStore } from "@nanostores/react";
+import BudgetAlert from "./components/BudgetAlert";
 import { ContactsProvider } from "./context/ContactsContext";
-import AlertBanner from "./components/AlertBanner";
 import ForgotPasswordPage from "./components/ForgotPasswordPage";
 
 function App() {
-  const auth = useStore(authStore); // Get authentication status from auth store
+  const auth = useStore(authStore);
 
-  // State to track dark mode
   const [isDarkMode, setIsDarkMode] = useState(
     localStorage.getItem("theme") === "dark"
   );
 
-  // Toggle theme function
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
     setIsDarkMode(newTheme);
     localStorage.setItem("theme", newTheme ? "dark" : "light");
   };
 
-  // Use effect to apply theme on load
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     if (storedTheme === "dark") {
@@ -47,18 +41,17 @@ function App() {
   return (
     <ContactsProvider>
       <ThemeProvider theme={isDarkMode ? darkTheme : lightTheme}>
-        <CssBaseline /> {/* Apply the correct baseline for the theme */}
+        <CssBaseline />
         <Router>
           <Box
             sx={{
               display: "flex",
               flexDirection: "column",
-              minHeight: "100vh", // Ensures footer is at the bottom
+              minHeight: "100vh",
             }}
           >
             <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
             <Container sx={{ flex: 1, mt: 4 }}>
-              {/* Mostrar BudgetAlert aquí */}
               {auth.isAuthenticated && <BudgetAlert />}
               <Routes>
                 {/* Protected routes */}
@@ -83,7 +76,7 @@ function App() {
                 />
               </Routes>
             </Container>
-            <Footer /> {/* Always stick footer to the bottom */}
+            <Footer />
           </Box>
         </Router>
       </ThemeProvider>

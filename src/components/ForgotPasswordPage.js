@@ -13,18 +13,12 @@ function ForgotPasswordPage() {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!email) {
-      // - If either is empty, set an appropriate error message.
       setError("Please enter your email address.");
       return;
     }
 
-    // - Retrieve the existing user from localStorage and verify if the entered email already exists.
     const userExists = usersList.find((user) => user.email === email);
 
-    // Simulate sending a password recovery email.
-    // Instructions:
-    // - If the email matches 'user@example.com', display a success message.
-    // - If the email exists, set an success message.
     if (userExists) {
       setError("");
       setSuccessMessage(
@@ -32,7 +26,6 @@ function ForgotPasswordPage() {
       );
       return;
     } else {
-      // - If the email does not match, display an error message indicating the email is not found.
       setSuccessMessage("");
       setError("Email is not found. Please register");
     }

@@ -33,13 +33,6 @@ export const logout = () => {
 export const registerUser = (newUser) => {
   const currentState = authStore.get();
 
-  /* const emailExists = currentState.usersList.some(
-    (user) => user.email === newUser.email
-  );
-
-  if (emailExists) {
-    throw new Error("This email already exist.");
-  } */
   const updatedUsersList = [...currentState.usersList, newUser];
 
   authStore.set({

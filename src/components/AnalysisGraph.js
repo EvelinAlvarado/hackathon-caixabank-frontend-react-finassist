@@ -1,6 +1,4 @@
 import React from "react";
-import { useStore } from "@nanostores/react";
-import { transactionsStore } from "../stores/transactionStore";
 import {
   BarChart,
   Bar,
@@ -14,21 +12,8 @@ import { Paper, Typography } from "@mui/material";
 import { useFinancialCalculations } from "../custom-hooks/useFinancialCalculations";
 
 function AnalysisGraph() {
-  // const transactions = useStore(transactionsStore);
   const { incomeExpensePerCategory } = useFinancialCalculations();
 
-  // Unique categories
-  // Instructions:
-  // - Extract unique categories from the transactions
-  // - This should gather all the categories used in the 'category' field of the transactions
-  // Add logic to extract unique categories from transactions
-
-  // Chart data
-  // Instructions:
-  // - Aggregate income and expense data for each category
-  // - For each category, calculate the total 'income' and 'expense'
-  // - The data array should return an object like this for each category: { category, Income, Expense }
-  // Add logic to calculate income and expense for each category
   const data = incomeExpensePerCategory;
   console.log("data:", data);
 

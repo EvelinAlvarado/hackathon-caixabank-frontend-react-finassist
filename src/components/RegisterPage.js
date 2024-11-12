@@ -11,57 +11,35 @@ function RegisterPage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
-  const auth = useStore(authStore); // Get usersList status from auth store
+  const auth = useStore(authStore);
 
   const usersList = auth.usersList;
 
   const handleRegister = (e) => {
     e.preventDefault();
 
-    // Instructions:
-
-    // Validate that all fields (email, password, confirmPassword) are filled.
-    // - If any field is empty, display an error message.
     if (!email || !password || !confirmPassword) {
-      // - If either is empty, set an appropriate error message.
       setError("Please complete all fields.");
       return;
     }
 
-    // Check if the passwords match.
-    // - If the passwords do not match, set an appropriate error message.
     if (password !== confirmPassword) {
-      // - If either is empty, set an appropriate error message.
       setError("Passwords do not match");
       return;
     }
 
-    // Check if the email is already registered in localStorage.
-    console.log("userList before pushing newUser:", usersList);
-
-    // - Retrieve the existing user from localStorage and verify if the entered email already exists.
     const userExists = usersList.find((user) => user.email === email);
-    // - If the email exists, set an error message.
+
     if (userExists) {
       setError("Email is already registered. Please Login");
       return;
     }
 
-    // Save the new user's data to localStorage.
     const newUser = { email, password };
 
-    console.log("new user: ", newUser);
-
     try {
-      // - If validation passes, store the new user's email and password in localStorage.
       registerUser(newUser);
-      // Automatically log the user in after successful registration.
-      // - Call the `login` function to set the authenticated user in the store.
       login(newUser);
-      // console.log("New user registered successfully:", newUser);
-      // Redirect the user to the dashboard.
-      // - After successful registration and login, redirect the user to the home/dashboard page.
-      // console.log("userList after pushing newUser:", usersList);
       setSuccess(true);
       setTimeout(() => {
         navigate("/");

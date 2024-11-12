@@ -10,16 +10,9 @@ import {
 } from "@mui/material";
 
 function RecentTransactions({ transactions }) {
-  // Recent transactions
-  // Instructions:
-  // - Sort the transactions by date, showing the most recent first.
-  // - Extract only the last 5 transactions for display.
   const recentTransactions = [...transactions]
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 5);
-  // Implement logic to get the last 5 transactions
-
-  console.log("recentTransactions:", recentTransactions);
 
   return (
     <div>

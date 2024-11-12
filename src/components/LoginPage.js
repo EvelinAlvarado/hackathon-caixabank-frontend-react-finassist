@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { authStore, login } from "../stores/authStore";
 import { Box, Button, TextField, Typography, Alert, Grid } from "@mui/material";
 import { useStore } from "@nanostores/react";
-import ForgotPasswordPage from "./ForgotPasswordPage";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -11,37 +10,21 @@ function LoginPage() {
   const [error, setError] = useState("");
   const [showCredentials, setShowCredentials] = useState(false);
   const navigate = useNavigate();
-  const { usersList, currentUser } = useStore(authStore); // Get all status from auth store
+  const { usersList } = useStore(authStore);
 
   const defaultCredentials = {
     email: "default@example.com",
     password: "password123",
   };
-  console.log(email, password);
-
-  // console.log(
-  //   "currentUser before handleLogin: ",
-  //   currentUser,
-  //   "usersList:",
-  //   usersList
-  // );
 
   const handleLogin = (e) => {
     e.preventDefault();
 
-    // Validate that fields are not empty
-    // Instructions:
-    // - Check if the email and password fields are filled.
     if (!email || !password) {
-      // - If either is empty, set an appropriate error message.
       setError("Please complete all fields.");
       return;
     }
 
-    // Validate credentials
-    // Instructions:
-    // - Check if the entered credentials match the default credentials or the stored user credentials.
-    // Check for default credentials
     if (
       email === defaultCredentials.email &&
       password === defaultCredentials.password
@@ -52,7 +35,6 @@ function LoginPage() {
       return;
     }
 
-    // - If valid, call the `login` function and navigate to the homepage.
     const userExists = usersList.find((user) => user.email === email);
 
     if (userExists) {
@@ -63,7 +45,6 @@ function LoginPage() {
         setError("Incorrect password. Please try again.");
       }
     } else {
-      // - If invalid, set an error message.
       setError("Invalid credentials. Please register first.");
     }
   };
@@ -149,10 +130,6 @@ function LoginPage() {
         </>
       )}
 
-      {/* Show error message when applicable */}
-      {/* - Use the Alert component to display the error message if one exists. */}
-      {/* - Ensure that registration and forgot password options are displayed below the error message if present. */}
-
       {showCredentials && (
         <Alert severity="info" sx={{ mt: 2 }}>
           <strong>Email:</strong> {defaultCredentials.email}
@@ -160,7 +137,6 @@ function LoginPage() {
           <strong>Password:</strong> {defaultCredentials.password}
         </Alert>
       )}
-      {/* <ForgotPasswordPage /> */}
     </Box>
   );
 }

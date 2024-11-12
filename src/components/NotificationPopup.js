@@ -1,5 +1,5 @@
 import React from "react";
-import { Snackbar, Alert, Badge } from "@mui/material";
+import { Snackbar, Alert } from "@mui/material";
 
 const NotificationPopup = ({ open, message, onClose }) => {
   return (

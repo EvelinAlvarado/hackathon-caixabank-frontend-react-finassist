@@ -49,13 +49,7 @@ const Footer = () => {
         © {new Date().getFullYear()} Personal Finance Assistant
       </Typography>
 
-      {/* Social media icons */}
-      {/* Instructions:
-                - Add IconButtons for Facebook, Twitter, and Instagram.
-                - Ensure each icon button links to the appropriate social media page.
-                - Use the respective Material UI icons for Facebook, Twitter, and Instagram. */}
       <Box sx={{ display: "flex", justifyContent: "center", color: "#777777" }}>
-        {/* IconButton for Facebook */}
         <IconButton
           component="a"
           href="https://facebook.com"
@@ -64,7 +58,6 @@ const Footer = () => {
         >
           <FacebookIcon />
         </IconButton>
-        {/* IconButton for Twitter */}
         <IconButton
           component="a"
           href="https://twitter.com"
@@ -73,7 +66,6 @@ const Footer = () => {
         >
           <TwitterIcon />
         </IconButton>
-        {/* IconButton for Instagram */}
         <IconButton
           component="a"
           href="https://instagram.com"
@@ -97,7 +89,6 @@ const Footer = () => {
           {POLICIES.map((policy, index) => (
             <span key={index} style={{ display: "flex", alignItems: "center" }}>
               <Link href={policy.url}>{policy.label}</Link>
-              {/* Add "|" if not the last one */}
               {index < POLICIES.length - 1 && (
                 <Typography sx={{ mx: 1 }}>|</Typography>
               )}

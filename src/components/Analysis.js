@@ -10,7 +10,6 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
-  Button,
 } from "@mui/material";
 import {
   LineChart,
@@ -23,7 +22,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import ExportButton from "./ExportButton"; // Import the refactored ExportButton
+import ExportButton from "./ExportButton";
 import getWeekNumber from "../utils/getWeekNumber";
 import { userSettingsStore } from "../stores/userSettingsStore";
 
@@ -37,7 +36,6 @@ function Analysis() {
   const handleChangeTimeFrame = (e) => {
     setTimeFrame(e.target.value);
   };
-  console.log(timeFrame);
 
   const handleChangeReportType = (e) => {
     setReportType(e.target.value);
@@ -47,9 +45,6 @@ function Analysis() {
     (a, b) => new Date(a.date) - new Date(b.date)
   );
 
-  // Prepare the data for the trend analysis report based on the selected time frame (daily, weekly, monthly, yearly).
-  // Each object in the array should have the structure: { key, income, expense }
-  // Replace with logic to group transactions by the selected time frame.
   const trendData = transactionsSorted.reduce((acc, transaction) => {
     const date = new Date(transaction.date);
     let key = "";
@@ -84,11 +79,6 @@ function Analysis() {
 
     return acc;
   }, []);
-  // console.log("trendData and ", timeFrame, ": ", trendData);
-
-  // Prepare the data for the budget vs actual report.
-  // Each object in the array should have the structure: { key, budget, actual }
-  // Replace with logic to compare the actual expenses against the budget.
 
   const budgetData = transactionsSorted.reduce((acc, transaction) => {
     const date = new Date(transaction.date);
@@ -115,7 +105,6 @@ function Analysis() {
     }
     return acc;
   }, []);
-  // console.log("budgetData: ", budgetData);
 
   return (
     <Box sx={{ mt: 4, p: { xs: 2, md: 4 }, bgcolor: "background.default" }}>
@@ -123,7 +112,6 @@ function Analysis() {
         Advanced Analysis
       </Typography>
 
-      {/* Display No Transactions Message */}
       {transactions.length === 0 && (
         <Typography variant="h6" color="text.secondary">
           No transactions available.
@@ -139,7 +127,6 @@ function Analysis() {
               labelId="timeframe-select-label"
               id="timeframe-select"
               label="Time Frame"
-              // Implement logic to update the time frame state
               value={timeFrame}
               onChange={handleChangeTimeFrame}
               disabled={reportType === "budget"}
@@ -159,7 +146,6 @@ function Analysis() {
               labelId="report-type-select-label"
               id="report-type-select"
               label="Report Type"
-              // Implement logic to update the report type state
               value={reportType}
               onChange={handleChangeReportType}
             >
@@ -170,9 +156,6 @@ function Analysis() {
         </Grid>
 
         {/* Export Button */}
-        {/* Instructions:
-                    - Implement the ExportButton component with the appropriate data and headers.
-                    - The data and headers should be based on the selected report type. */}
         <Grid item xs={12} sm={6} md={4}>
           <ExportButton
             data={reportType === "trend" ? trendData : budgetData}
@@ -186,7 +169,6 @@ function Analysis() {
         </Grid>
       </Grid>
 
-      {/* Render the trend analysis chart if 'trend' is selected */}
       {reportType === "trend" && (
         <Grid container spacing={4}>
           <Grid item xs={12} md={12}>
@@ -219,12 +201,6 @@ function Analysis() {
         </Grid>
       )}
 
-      {/* Render the budget vs actual expenses chart if 'budget' is selected */}
-      {/* Implement the Budget vs. Actual Expenses report
-                Instructions:
-                - Display a bar chart comparing the budgeted amounts to the actual expenses.
-                - Use the budgetData array to render the chart.
-            */}
       {reportType === "budget" && (
         <Grid container spacing={4}>
           <Grid item xs={12} md={12}>
@@ -248,7 +224,6 @@ function Analysis() {
         </Grid>
       )}
 
-      {/* Additional Analysis Sections */}
       <Grid container spacing={4} sx={{ mt: 4 }}>
         <Grid item xs={12} md={6}>
           <Paper sx={{ padding: 2, boxShadow: 3, borderRadius: 2 }}>
