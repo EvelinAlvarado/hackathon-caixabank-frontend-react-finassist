@@ -19,6 +19,7 @@ import { useStore } from "@nanostores/react"; // Nanostores to track auth
 import BudgetAlert from "./components/BudgetAlert"; // Importar BudgetAlert
 import { ContactsProvider } from "./context/ContactsContext";
 import AlertBanner from "./components/AlertBanner";
+import ForgotPasswordPage from "./components/ForgotPasswordPage";
 
 function App() {
   const auth = useStore(authStore); // Get authentication status from auth store
@@ -76,6 +77,10 @@ function App() {
                 {/* Public routes */}
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
+                <Route
+                  path="/forgot-password"
+                  element={<ForgotPasswordPage />}
+                />
               </Routes>
             </Container>
             <Footer /> {/* Always stick footer to the bottom */}

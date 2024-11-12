@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { authStore, login } from "../stores/authStore";
 import { Box, Button, TextField, Typography, Alert, Grid } from "@mui/material";
 import { useStore } from "@nanostores/react";
+import ForgotPasswordPage from "./ForgotPasswordPage";
 
 function LoginPage() {
   const [email, setEmail] = useState("");
@@ -136,7 +137,10 @@ function LoginPage() {
               <Button
                 variant="outlined"
                 fullWidth
-                onClick={handleShowDefaultCredentials}
+                // onClick={handleShowDefaultCredentials}
+                onClick={() => {
+                  navigate("/forgot-password");
+                }}
               >
                 Forgot Password
               </Button>
@@ -156,6 +160,7 @@ function LoginPage() {
           <strong>Password:</strong> {defaultCredentials.password}
         </Alert>
       )}
+      {/* <ForgotPasswordPage /> */}
     </Box>
   );
 }
