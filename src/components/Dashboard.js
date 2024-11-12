@@ -5,6 +5,7 @@ import ExportButton from "./ExportButton";
 import DownloadProfilerData from "./DownloadProfilerData";
 import { onRenderCallback } from "../utils/onRenderCallback";
 import { transactionsStore } from "../stores/transactionStore";
+import { useFinancialCalculations } from "../custom-hooks/useFinancialCalculations";
 
 // Lazy load components for performance optimization
 const AnalysisGraph = React.lazy(() => import("./AnalysisGraph"));
@@ -15,20 +16,9 @@ const RecentTransactions = React.lazy(() => import("./RecentTransactions"));
 
 function Dashboard() {
   const transactions = useStore(transactionsStore);
+  const { totalIncome, totalExpense, balance } = useFinancialCalculations();
 
   // Replace the placeholder values with calculations for total income, total expenses, and balance.
-  // Calculate total income from transactions
-  const totalIncome = [...transactions]
-    .filter((t) => t.type === "income")
-    .reduce((total, t) => total + t.amount, 0);
-  console.log("totalIncome:", totalIncome);
-  // Calculate total expenses from transactions
-  const totalExpense = [...transactions]
-    .filter((t) => t.type === "expense")
-    .reduce((total, t) => total + t.amount, 0);
-  console.log("totalExpense:", totalExpense);
-  // Calculate balance based on total income and expenses
-  const balance = totalIncome - totalExpense;
 
   return (
     <Profiler id="Dashboard" onRender={onRenderCallback}>

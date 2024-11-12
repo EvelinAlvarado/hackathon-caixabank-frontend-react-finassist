@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   AppBar,
   Toolbar,
@@ -25,11 +25,35 @@ import CaixaBankIcon from "../assets/caixabank-icon.png";
 import { AUTH_LINKS, MENU_ITEMS } from "../constants/navigation";
 import { authStore, logout } from "../stores/authStore";
 import { useStore } from "@nanostores/react";
+import { budgetAlertStore, resetBudgetAlert } from "../stores/budgetAlertStore";
+import NotificationPopup from "./NotificationPopup";
 
 const Navbar = ({ toggleTheme, isDarkMode }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated, currentUser } = useStore(authStore);
+  const budgetAlert = useStore(budgetAlertStore);
+  const [open, setOpen] = useState(false);
+
+  // useEffect(() => {
+  //   setOpen(budgetAlert.isVisible);
+  // }, [budgetAlert.isVisible]);
+
+  const handleClick = () => {
+    setOpen(budgetAlert.isVisible);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    console.log("budgetAlert:", budgetAlert);
+    // setOpen(false);
+    resetBudgetAlert();
+    console.log("budgetAlert:", budgetAlert);
+  };
+  console.log("budgetAlert:", budgetAlert);
 
   const toggleDrawer = (open) => (event) => {
     if (
@@ -191,11 +215,20 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
           )}
 
           <Box sx={{ display: "flex" }}>
-            <IconButton sx={{ paddingRight: { md: 2 } }}>
-              <Badge color="error" variant="dot">
-                <NotificationsIcon />
-              </Badge>
-            </IconButton>
+            {isAuthenticated && (
+              <IconButton
+                sx={{ paddingRight: { md: 2 } }}
+                onClick={handleClick}
+              >
+                <Badge
+                  color="error"
+                  variant="dot"
+                  invisible={budgetAlert.notificationCount === 0}
+                >
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            )}
             {/* Dark/light Mode   */}
             <IconButton
               aria-label="Toggle Theme"
@@ -225,6 +258,13 @@ const Navbar = ({ toggleTheme, isDarkMode }) => {
                         - Use the `Link` component from `react-router-dom`. */}
       {/* </Box>
       </Drawer> */}
+      {budgetAlert.isVisible && (
+        <NotificationPopup
+          open={open}
+          message={budgetAlert.message}
+          onClose={handleClose}
+        />
+      )}
     </>
   );
 };

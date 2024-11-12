@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useStore } from "@nanostores/react";
-import { userSettingsStore } from "../stores/userSettingsStore";
+import {
+  setUserSettings,
+  userSettingsStore,
+} from "../stores/userSettingsStore";
 import {
   budgetAlertStore,
   resetBudgetAlert,
@@ -46,7 +49,11 @@ function Settings() {
   const handleOnChangeAlertsEnabled = (e) => {
     const isChecked = e.target.checked;
     setAlertsEnabled(isChecked);
-    userSettingsStore.set({
+    /* userSettingsStore.set({
+      ...userSettings,
+      alertsEnabled: isChecked,
+    }); */
+    setUserSettings({
       ...userSettings,
       alertsEnabled: isChecked,
     });
@@ -94,7 +101,13 @@ function Settings() {
       setError("");
       setBudgetExceeded(false);
       // - If validation passes, clear the error message and save the updated settings to the store.
-      userSettingsStore.set({
+      /* userSettingsStore.set({
+        ...userSettings,
+        totalBudgetLimit,
+        categoryLimits,
+        alertsEnabled,
+      }); */
+      setUserSettings({
         ...userSettings,
         totalBudgetLimit,
         categoryLimits,

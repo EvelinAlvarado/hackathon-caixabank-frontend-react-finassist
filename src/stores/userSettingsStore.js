@@ -1,12 +1,19 @@
-import { atom } from 'nanostores';
+import { atom } from "nanostores";
 
-export const userSettingsStore = atom({
-    totalBudgetLimit: 1000,
-    categoryLimits: {},
-    alertsEnabled: true,
-    budgetExceeded: false,
-});
+const initialSettings = JSON.parse(localStorage.getItem("userSettings")) || {
+  totalBudgetLimit: 1000,
+  categoryLimits: {},
+  alertsEnabled: true,
+  budgetExceeded: false,
+};
 
-if (process.env.NODE_ENV === 'development') {
-    window.userSettingsStore = userSettingsStore;
+export const userSettingsStore = atom(initialSettings);
+
+export const setUserSettings = (settings) => {
+  userSettingsStore.set(settings);
+  localStorage.setItem("userSettings", JSON.stringify(settings));
+};
+
+if (process.env.NODE_ENV === "development") {
+  window.userSettingsStore = userSettingsStore;
 }

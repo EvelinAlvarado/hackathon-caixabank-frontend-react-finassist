@@ -11,17 +11,17 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Paper, Typography } from "@mui/material";
+import { useFinancialCalculations } from "../custom-hooks/useFinancialCalculations";
 
 function AnalysisGraph() {
-  const transactions = useStore(transactionsStore);
+  // const transactions = useStore(transactionsStore);
+  const { incomeExpensePerCategory } = useFinancialCalculations();
 
   // Unique categories
   // Instructions:
   // - Extract unique categories from the transactions
   // - This should gather all the categories used in the 'category' field of the transactions
   // Add logic to extract unique categories from transactions
-  const uniqueCategories = [...new Set(transactions.map((t) => t.category))];
-  console.log("Unique Categories:", uniqueCategories);
 
   // Chart data
   // Instructions:
@@ -29,23 +29,7 @@ function AnalysisGraph() {
   // - For each category, calculate the total 'income' and 'expense'
   // - The data array should return an object like this for each category: { category, Income, Expense }
   // Add logic to calculate income and expense for each category
-  const data = uniqueCategories.map((category) => {
-    const categoryTransactions = transactions.filter(
-      (t) => t.category === category
-    );
-    const incomeTotal = categoryTransactions
-      .filter((t) => t.type === "income")
-      .reduce((total, t) => total + (t.amount || 0), 0);
-    const expenseTotal = categoryTransactions
-      .filter((t) => t.type === "expense")
-      .reduce((total, t) => total + (t.amount || 0), 0);
-
-    return {
-      category: category,
-      Income: incomeTotal,
-      Expense: expenseTotal,
-    };
-  });
+  const data = incomeExpensePerCategory;
   console.log("data:", data);
 
   return (

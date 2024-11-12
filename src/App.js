@@ -18,6 +18,7 @@ import { authStore } from "./stores/authStore"; // Import auth store for authent
 import { useStore } from "@nanostores/react"; // Nanostores to track auth
 import BudgetAlert from "./components/BudgetAlert"; // Importar BudgetAlert
 import { ContactsProvider } from "./context/ContactsContext";
+import AlertBanner from "./components/AlertBanner";
 
 function App() {
   const auth = useStore(authStore); // Get authentication status from auth store
@@ -56,7 +57,8 @@ function App() {
           >
             <Navbar toggleTheme={toggleTheme} isDarkMode={isDarkMode} />
             <Container sx={{ flex: 1, mt: 4 }}>
-              <BudgetAlert /> {/* Mostrar BudgetAlert aquí */}
+              {/* Mostrar BudgetAlert aquí */}
+              {auth.isAuthenticated && <BudgetAlert />}
               <Routes>
                 {/* Protected routes */}
                 <Route
